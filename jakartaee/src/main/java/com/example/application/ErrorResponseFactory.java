@@ -1,5 +1,6 @@
 package com.example.application;
 
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import com.example.ApplicationDatabaseException;
@@ -13,26 +14,44 @@ public class ErrorResponseFactory {
     private static final Logger logger = Logger.getLogger(ErrorResponseFactory.class.getName());
     private static final String LOG_PREFIX = ">>> [" + ErrorResponseFactory.class.getSimpleName() + "]: ";
 
-    private ErrorResponseFactory() {
+    // ファクトリーパターンはステートレス・不変として設計する。
+    // 内部フィールドはfinalにしてコンストラクタで設定するようにすること
+    private final ErrorResponseStrategy strategy;
+
+    private ErrorResponseFactory(ErrorResponseStrategy strategy) {
+        this.strategy = strategy;
     }
 
-    public static Response build(Throwable throwable) {
+    public static ErrorResponseFactory resolveStrategy(String errorFormat) {
+        ErrorResponseStrategy strategy;
+        switch (errorFormat.toLowerCase(Locale.ROOT)) {
+            case "custom":
+                strategy = new ErrorResponseCustomStrategy();
+                break;
+            default:
+                strategy = new ErrorResponseCustomStrategy();
+                break;
+        }
+        return new ErrorResponseFactory(strategy);
+    }
+
+    public Response build(Throwable throwable) {
         Throwable cause = findCause(throwable);
 
         ResponseBuilder builder;
         if (cause instanceof WebApplicationException) {
-            builder = handleWebApplicationException((WebApplicationException) cause);
+            builder = this.strategy.handleWebApplicationException((WebApplicationException) cause);
         } else if (cause instanceof ValidationErrorException) {
-            builder = handleValidationErrorException((ValidationErrorException) cause);
+            builder = this.strategy.handleValidationErrorException((ValidationErrorException) cause);
         } else if (cause instanceof ApplicationDatabaseException) {
-            builder = handleApplicationDatabaseException((ApplicationDatabaseException) cause);
+            builder = this.strategy.handleApplicationDatabaseException((ApplicationDatabaseException) cause);
         } else {
-            builder = handleOtherException(cause);
+            builder = this.strategy.handleOtherException(cause);
         }
         return builder.type(MediaTypes.APPLICATION_JSON_UTF_8).build();
     }
 
-    public static Throwable findCause(Throwable throwable) {
+    private Throwable findCause(Throwable throwable) {
         final int max_depth = 10;
 
         Throwable cause = throwable;
@@ -44,40 +63,5 @@ public class ErrorResponseFactory {
         }
         logger.warning(LOG_PREFIX + "原因例外の取得で、ループの最大回数を超えました。");
         return cause;
-    }
-
-    public static ResponseBuilder handleWebApplicationException(WebApplicationException cause) {
-        int status = cause.getResponse().getStatus();
-        ErrorResponse entity = new ErrorResponse(
-                cause.getClass().getSimpleName(),
-                cause.getMessage());
-        return Response.status(status).entity(entity);
-    }
-
-    public static ResponseBuilder handleValidationErrorException(ValidationErrorException cause) {
-        int status = Response.Status.BAD_REQUEST.getStatusCode();
-        ErrorResponse entity = new ErrorResponse();
-        cause.getErrors().forEach(d -> {
-            entity.addError(
-                    cause.getClass().getSimpleName(),
-                    String.format("%s[%s]", d.getMessage(), d.getField()));
-        });
-        return Response.status(status).entity(entity);
-    }
-
-    public static ResponseBuilder handleApplicationDatabaseException(ApplicationDatabaseException cause) {
-        int status = cause.getStatus();
-        ErrorResponse entity = new ErrorResponse(
-                cause.getClass().getSimpleName(),
-                cause.getMessage());
-        return Response.status(status).entity(entity);
-    }
-
-    public static ResponseBuilder handleOtherException(Throwable cause) {
-        int status = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-        ErrorResponse entity = new ErrorResponse(
-                cause.getClass().getSimpleName(),
-                cause.getMessage());
-        return Response.status(status).entity(entity);
     }
 }

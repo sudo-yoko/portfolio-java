@@ -26,7 +26,7 @@ public class ErrorResponseFactoryTest {
     @Test
     void testBadRequestException_1() {
         BadRequestException ex = new BadRequestException("不正なリクエストです。");
-        Response response = ErrorResponseFactory.build(ex);
+        Response response = ErrorResponseFactory.resolveStrategy("custom").build(ex);
         System.out.println(LOG_PREFIX
                 + String.format("status=%s, body=%s", response.getStatus(), jsonb.toJson(response.getEntity())));
     }
@@ -36,7 +36,7 @@ public class ErrorResponseFactoryTest {
     void testValidationErrorException_1() {
         ValidationErrorException ex = new ValidationErrorException();
         ex.addError("userId", "ユーザー名が不正です。");
-        Response response = ErrorResponseFactory.build(ex);
+        Response response = ErrorResponseFactory.resolveStrategy("custom").build(ex);
         System.out.println(LOG_PREFIX
                 + String.format("status=%s, body=%s", response.getStatus(), jsonb.toJson(response.getEntity())));
     }
@@ -47,7 +47,7 @@ public class ErrorResponseFactoryTest {
         ValidationErrorException ex = new ValidationErrorException();
         ex.addError("userId", "ユーザーIDが不正です。");
         ex.addError("userName", "ユーザー名が不正です。");
-        Response response = ErrorResponseFactory.build(ex);
+        Response response = ErrorResponseFactory.resolveStrategy("custom").build(ex);
         System.out.println(LOG_PREFIX
                 + String.format("status=%s, body=%s", response.getStatus(), jsonb.toJson(response.getEntity())));
     }
@@ -56,7 +56,7 @@ public class ErrorResponseFactoryTest {
     @Test
     void testOtherException_1() {
         IllegalArgumentException ex = new IllegalArgumentException("不正な引数です。");
-        Response response = ErrorResponseFactory.build(ex);
+        Response response = ErrorResponseFactory.resolveStrategy("custom").build(ex);
         System.out.println(LOG_PREFIX
                 + String.format("status=%s, body=%s", response.getStatus(), jsonb.toJson(response.getEntity())));
     }
@@ -69,7 +69,7 @@ public class ErrorResponseFactoryTest {
         Exception ex2 = new Exception("例外２", ex1);
         ex1.initCause(ex2); // 例外１の原因例外に、例外２を設定する
 
-        Response response = ErrorResponseFactory.build(ex1);
+        Response response = ErrorResponseFactory.resolveStrategy("custom").build(ex1);
         System.out.println(LOG_PREFIX
                 + String.format("status=%s, body=%s", response.getStatus(), jsonb.toJson(response.getEntity())));
     }

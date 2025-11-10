@@ -1,5 +1,6 @@
 POST http://localhost:8080/jakartaee/users/12345
 X-Api-Key: key-00001
+X-Error-Format: custom
 Content-Type: application/json
 
 {

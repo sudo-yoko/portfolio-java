@@ -3,14 +3,17 @@ package com.example.application;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ErrorResponse {
+/**
+ * 独自形式のエラーレスポンス
+ */
+public class ErrorResponseCustom {
     private List<Error> errors;
 
-    public ErrorResponse() {
+    public ErrorResponseCustom() {
         errors = new ArrayList<>();
     }
 
-    public ErrorResponse(String type, String message) {
+    public ErrorResponseCustom(String type, String message) {
         this();
         addError(type, message);
     }
