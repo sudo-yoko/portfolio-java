@@ -4,5 +4,6 @@ Content-Type: application/json
 
 {
     "userId": "12345",
-    "userName": "test tarow"
+    "userName": "test taro1",
+    "email": "test1@taro.com"
 }

@@ -4,6 +4,7 @@ public class UsersRequest {
 
     private String userId;
     private String userName;
+    private String email;
     private String properties;
 
     public String getUserId() {
@@ -22,6 +23,14 @@ public class UsersRequest {
         this.userName = userName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getProperties() {
         return properties;
     }
@@ -36,6 +45,7 @@ public class UsersRequest {
         sb.append("{ ");
         sb.append("userId=").append(userId).append(", ");
         sb.append("userName=").append(userName).append(", ");
+        sb.append("email=").append(email).append(", ");
         sb.append("properties=").append(properties);
         sb.append(" }");
         return sb.toString();

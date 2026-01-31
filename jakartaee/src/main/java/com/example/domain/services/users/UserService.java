@@ -33,6 +33,7 @@ public class UserService {
         if (existingUser.isDeleted()) {
             existingUser.setDeleted(false);
             existingUser.setUserName(user.getUserName());
+            existingUser.setEmail(user.getEmail());
             repository.merge(existingUser);
             return;
         }
@@ -53,6 +54,7 @@ public class UserService {
         }
 
         existingUser.setUserName(user.getUserName());
+        existingUser.setEmail(user.getEmail());
         existingUser.setDeleted(false);
         repository.merge(existingUser);
     }

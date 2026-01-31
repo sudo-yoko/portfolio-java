@@ -23,6 +23,9 @@ public class User implements Serializable {
     @Column(name = "USER_NAME")
     private String userName;
 
+    @Column(name = "EMAIL")
+    private String email;
+
     @Column(name = "DELETED")
     private boolean deleted;
 
@@ -47,6 +50,14 @@ public class User implements Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public boolean isDeleted() {
@@ -75,6 +86,7 @@ public class User implements Serializable {
         sb.append("{ ");
         sb.append("userId=").append(userId).append(", ");
         sb.append("userName=").append(userName).append(", ");
+        sb.append("email=").append(email).append(", ");
         sb.append("deleted=").append(deleted).append(", ");
         sb.append("timestamp=").append(timestamp).append(", ");
         sb.append("version=").append(version);

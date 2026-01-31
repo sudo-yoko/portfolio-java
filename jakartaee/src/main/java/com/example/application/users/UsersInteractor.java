@@ -10,7 +10,7 @@ import jakarta.ws.rs.NotFoundException;
 
 @RequestScoped
 public class UsersInteractor {
-    
+
     @Inject
     private UsersServiceProxy proxy;
     @Inject
@@ -24,6 +24,7 @@ public class UsersInteractor {
         UsersResponse response = new UsersResponse();
         response.setUserId(user.getUserId());
         response.setUserName(user.getUserName());
+        response.setEmail(user.getEmail());
         response.setTimestamp(OffsetDateTimeUtils.toJapanIsoString(user.getTimestamp()));
         response.setVersion(Long.toString(user.getVersion()));
         return response;
@@ -33,6 +34,7 @@ public class UsersInteractor {
         User user = new User();
         user.setUserId(request.getUserId());
         user.setUserName(request.getUserName());
+        user.setEmail(request.getEmail());
         proxy.createUser(user);
         slack.postMessageAsync(String.format("ユーザーが登録されました。[%s]", user.getUserId()));
     }
@@ -41,6 +43,7 @@ public class UsersInteractor {
         User user = new User();
         user.setUserId(request.getUserId());
         user.setUserName(request.getUserName());
+        user.setEmail(request.getEmail());
         proxy.createOrReplaceUser(user);
     }
 

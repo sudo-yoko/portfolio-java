@@ -4,6 +4,7 @@ public class UsersResponse {
 
     private String userId;
     private String userName;
+    private String email;
     private String timestamp;
     private String version;
 
@@ -21,6 +22,14 @@ public class UsersResponse {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getTimestamp() {
@@ -45,9 +54,11 @@ public class UsersResponse {
         sb.append("{ ");
         sb.append("userId=").append(userId).append(", ");
         sb.append("userName=").append(userName).append(", ");
+        sb.append("email=").append(email).append(", ");
         sb.append("timestamp=").append(timestamp).append(", ");
         sb.append("version=").append(version);
         sb.append(" }");
         return sb.toString();
     }
+
 }
