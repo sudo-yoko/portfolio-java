@@ -1,5 +1,7 @@
 package com.example.domain.entities.user;
 
+import java.util.ArrayList;
+
 import com.example.ApplicationClock;
 
 import jakarta.ejb.Stateless;
@@ -44,5 +46,13 @@ public class UserRepository {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public UserQuery.Result search(UserCriteria.Criteria criteria) {
+        // mock code
+        int count = 0;
+        ArrayList<User> users = new ArrayList<User>();
+        UserQuery.Result result = new UserQuery.Result(count, users);
+        return result;
     }
 }

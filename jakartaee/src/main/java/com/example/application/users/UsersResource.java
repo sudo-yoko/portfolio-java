@@ -32,6 +32,7 @@ public class UsersResource {
     @Inject
     private UsersInteractor interactor;
 
+    // /users/{userId}?sort=userId:asc,userName:desc&properties=userId,userName
     @Path("/{userId}")
     @GET
     @Produces(MediaTypes.APPLICATION_JSON_UTF_8)
