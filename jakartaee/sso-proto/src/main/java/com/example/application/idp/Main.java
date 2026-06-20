@@ -1,4 +1,4 @@
-package com.example.idp;
+package com.example.application.idp;
 
 public class Main {
     public static void main(String[] args) {
