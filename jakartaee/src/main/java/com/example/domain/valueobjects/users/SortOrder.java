@@ -6,13 +6,13 @@ import java.util.List;
 public class SortOrder {
 
     public static class Order {
-        private final ArrayList<Key> keys;
+        private final List<Key> keys;
 
         private Order(List<Key> keys) {
             this.keys = keys;
         }
 
-        public ArrayList<Key> getKeys() {
+        public List<Key> getKeys() {
             return keys;
         }
 
