@@ -1,4 +1,4 @@
-package com.example.application.client;
+package com.example.application.domain2.client;
 
 public class Main {
     public static void main(String[] args) {

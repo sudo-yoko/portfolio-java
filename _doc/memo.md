@@ -13,3 +13,17 @@ repo:eclipse-ee4j/eclipselink path:**/persistence.xml persistence_3_0.xsd
 EclipseLinkのドキュメント
 EclipseLink JPA を使用する際に必要な基本的な構成の例
 https://wiki.eclipse.org/EclipseLink/Examples/JPA/JPAConfigure
+
+SSO
+アプリAでログイン
+↓
+アプリAのトップページで、SSOボタン押す
+↓
+Idpの認可エンドポイントに飛ぶ
+↓
+移譲同意ページ
+↓
+アプリBのコールバックURLに飛ぶ
+↓
+アプリBのトップページ
+
