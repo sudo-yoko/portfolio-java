@@ -1,0 +1,46 @@
+package com.example.application.domain1.idp;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import com.example.application.domain1.DomainCookie;
+import com.example.application.domain1.idp.AppSession.Data;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+/**
+ * 同意確認の再試行
+ */
+@WebServlet("/domain1/idp/retry")
+public class RetryServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(RetryServlet.class.getName());
+    private static final String LOG_PREFIX = ">>> [" + RetryServlet.class.getSimpleName() + "]: ";
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info(LOG_PREFIX + "doGet start.");
+
+        // ログインクッキーの確認
+        Optional<String> cookie = DomainCookie.SessionId.validate(req, resp);
+        if (!cookie.isPresent()) {
+            return;
+        }
+        // セッションの確認
+        Optional<Data> optAppSession = AppSession.validate(req, resp);
+        if (!optAppSession.isPresent()) {
+            return;
+        }
+        // // セッションが無ければ作成する
+        // AppSession.create(req);
+        // 同意確認結果をクリアする
+        AppSession.setConsent(req, null);
+
+        resp.sendRedirect(req.getContextPath() + "/domain1/idp/auth");
+    }
+
+}

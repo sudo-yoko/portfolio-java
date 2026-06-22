@@ -3,8 +3,9 @@ package com.example.application.domain1.login;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
+import java.util.logging.Logger;
 
-import com.example.application.domain1.LoginCookie;
+import com.example.application.domain1.DomainCookie;
 import com.example.application.domain1.login.AppSession.Data;
 
 import jakarta.servlet.ServletException;
@@ -18,11 +19,15 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet("/domain1/login/top")
 public class TopServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(TopServlet.class.getName());
+    private static final String LOG_PREFIX = ">>> [" + TopServlet.class.getSimpleName() + "]: ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info(LOG_PREFIX + "doGet start.");
+
         // ログインクッキーの確認
-        Optional<String> sessionId = LoginCookie.SessionId.validate(req, resp);
+        Optional<String> sessionId = DomainCookie.SessionId.validate(req, resp);
         if (!sessionId.isPresent()) {
             return;
         }
@@ -43,7 +48,7 @@ public class TopServlet extends HttpServlet {
             out.println("<p>シングルサインオンの練習を始めましょう。</p>");
             // リンク先
             String href = req.getContextPath() + "/domain1/idp/auth";
-            out.println("<p><a href='" + href + "'>別のアプリにログインする</p>");
+            out.println("<p><a href='" + href + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
             out.println("</body>");
             out.println("</html>");
         }

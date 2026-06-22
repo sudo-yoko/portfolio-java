@@ -11,36 +11,37 @@ import jakarta.servlet.http.HttpSession;
  * Idpアプリケーション セッション
  */
 public class AppSession {
+    private static final String CONSENT = "consent";
 
     protected static void create(HttpServletRequest req) {
-        create(req, null);
+        req.getSession(true);
     }
 
     protected static void create(HttpServletRequest req, Boolean consent) {
         HttpSession session = req.getSession(true);
-        session.setAttribute("consent", consent);
+        session.setAttribute(CONSENT, consent);
     }
 
     protected static Boolean getConsent(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("consent") == null) {
+        if (session == null || session.getAttribute(CONSENT) == null) {
             return null;
         }
-        return (boolean) session.getAttribute("consent");
+        return (boolean) session.getAttribute(CONSENT);
     }
 
-    protected static void setConsent(HttpServletRequest req, boolean consent) {
+    protected static void setConsent(HttpServletRequest req, Boolean consent) {
         HttpSession session = req.getSession(true);
-        session.setAttribute("consent", consent);
+        session.setAttribute(CONSENT, consent);
     }
 
     protected static Optional<Data> validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("consent") == null) {
-            resp.sendRedirect(req.getContextPath() + "/login/top");
+        if (session == null || session.getAttribute(CONSENT) == null) {
+            resp.sendRedirect(req.getContextPath() + "/domain1/idp/auth");
             return Optional.empty();
         }
-        boolean consent = (boolean) session.getAttribute("consent");
+        boolean consent = (boolean) session.getAttribute(CONSENT);
         Data data = new Data();
         data.setConsent(consent);
         return Optional.of(data);

@@ -2,8 +2,9 @@ package com.example.application.domain1.login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
-import com.example.application.domain1.LoginCookie;
+import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,9 +17,13 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet("/domain1/login/auth")
 public class LoginServlet extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
+    private static final String LOG_PREFIX = ">>> [" + LoginServlet.class.getSimpleName() + "]: ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info(LOG_PREFIX + "doGet start.");
+
         resp.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = resp.getWriter()) {
             out.println("<!DOCTYPE html>");
@@ -45,6 +50,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info(LOG_PREFIX + "doPost start.");
+
         String id = req.getParameter("id");
         String password = req.getParameter("password");
 
@@ -55,7 +62,7 @@ public class LoginServlet extends HttpServlet {
             // ログイン成功。セッションを作成する
             AppSession.create(req, id);
             // ログインクッキーを作成する
-            LoginCookie.SessionId.create(req, resp);
+            DomainCookie.SessionId.create(req, resp);
             // トップページへ
             resp.sendRedirect(req.getContextPath() + "/domain1/login/top");
         } else {

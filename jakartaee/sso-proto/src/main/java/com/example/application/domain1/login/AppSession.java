@@ -11,20 +11,21 @@ import jakarta.servlet.http.HttpSession;
  * ログインアプリケーション セッション
  */
 public class AppSession {
+    private static final String ID = "id";
 
     protected static void create(HttpServletRequest req, String id) {
         HttpSession session = req.getSession(true);
-        session.setAttribute("id", id);
+        session.setAttribute(ID, id);
     }
 
     protected static Optional<Data> validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("id") == null) {
+        if (session == null || session.getAttribute(ID) == null) {
             resp.sendRedirect(req.getContextPath() + "/domain1/login/auth");
             return Optional.empty();
         }
         // セッションデータを返す
-        String id = (String) session.getAttribute("id");
+        String id = (String) session.getAttribute(ID);
         Data data = new Data();
         data.setId(id);
         return Optional.of(data);
