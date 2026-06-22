@@ -21,8 +21,8 @@ public class ConsentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // ログインクッキーの確認
-        Optional<LoginCookie.Data> data = LoginCookie.validate(req, resp);
-        if (!data.isPresent()) {
+        Optional<String> sessionId = LoginCookie.SessionId.validate(req, resp);
+        if (!sessionId.isPresent()) {
             return;
         }
 
@@ -33,12 +33,27 @@ public class ConsentServlet extends HttpServlet {
             out.println("<head><title>同意確認</title></head>");
             out.println("<body>");
             out.println("<h2>同意確認</h2>");
-            out.println("<form action='login' method='POST'>");
-            out.println("<input type='button' value='同意する'>");
-            out.println("<input type='button' value='同意しない'>");
+            String action = req.getContextPath() + "/domain1/idp/consent";
+            out.println("<form action='" + action + "' method='POST'>");
+            out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
+            out.println("<button type='submit' name='consent' value='deny'>同意しない</button>");
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String consent = req.getParameter("consent");
+        if ("approve".equals(consent)) {
+            AppSession.create(req, true);
+            resp.sendRedirect(req.getContextPath() + "/domain1/idp/auth");
+        } else if ("deny".equals(consent)) {
+            AppSession.create(req, false);
+            resp.sendRedirect(req.getContextPath() + "/domain1/login/top");
+        } else {
+
         }
     }
 

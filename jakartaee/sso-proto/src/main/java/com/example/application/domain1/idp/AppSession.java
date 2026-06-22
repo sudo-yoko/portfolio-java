@@ -13,8 +13,25 @@ import jakarta.servlet.http.HttpSession;
 public class AppSession {
 
     protected static void create(HttpServletRequest req) {
+        create(req, null);
+    }
+
+    protected static void create(HttpServletRequest req, Boolean consent) {
         HttpSession session = req.getSession(true);
-        session.setAttribute("consent", null);
+        session.setAttribute("consent", consent);
+    }
+
+    protected static Boolean getConsent(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("consent") == null) {
+            return null;
+        }
+        return (boolean) session.getAttribute("consent");
+    }
+
+    protected static void setConsent(HttpServletRequest req, boolean consent) {
+        HttpSession session = req.getSession(true);
+        session.setAttribute("consent", consent);
     }
 
     protected static Optional<Data> validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -24,9 +41,9 @@ public class AppSession {
             return Optional.empty();
         }
         boolean consent = (boolean) session.getAttribute("consent");
-        Data appSession = new Data();
-        appSession.setConsent(consent);
-        return Optional.of(appSession);
+        Data data = new Data();
+        data.setConsent(consent);
+        return Optional.of(data);
     }
 
     protected static class Data {

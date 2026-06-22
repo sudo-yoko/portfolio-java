@@ -26,13 +26,16 @@ public class LoginServlet extends HttpServlet {
             out.println("<head><title>ログイン</title></head>");
             out.println("<body>");
             out.println("<h2>ログイン</h2>");
+            // ログインエラーメッセージ
             String error = (String) req.getAttribute("error");
             if (error != null) {
                 out.println("<p style='color:red;'>" + error + "</p>");
             }
-            out.println(String.format("<form action='%s' method='POST'>", req.getContextPath() + "/domain1/login/auth"));
-            out.println("<input type='text' name='id' placeholder='ID'><br><br>");
-            out.println("<input type='password' name='password' placeholder='パスワード'><br><br>");
+            // フォームアクション
+            String action = req.getContextPath() + "/domain1/login/auth";
+            out.println("<form action='" + action + "' method='POST'>");
+            out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
+            out.println("<input type='password' name='password' value='123' placeholder='パスワード'><br><br>");
             out.println("<input type='submit' value='ログイン'>");
             out.println("</form>");
             out.println("</body>");
@@ -50,26 +53,14 @@ public class LoginServlet extends HttpServlet {
 
         if ("admin".equals(id) && "123".equals(password)) {
             // ログイン成功。セッションを作成する
-            // HttpSession session = req.getSession(true);
-            // session.setAttribute("id", id);
             AppSession.create(req, id);
-
             // ログインクッキーを作成する
-            // Cookie cookie = new Cookie("SSO_SESSION_ID", "proto-token-123");
-            // // 本番構成はログインアプリとIdpは同じドメインとし、ログインクッキーの有効範囲はそのドメインとする。
-            // // cookie.setDomain(".sso-proto.com");
-            // // cookie.setPath("/"); // ドメイン全体で有効
-            // cookie.setHttpOnly(true);
-            // cookie.setSecure(true);
-            // resp.addCookie(cookie);
-            LoginCookie.create(req, resp);
-
+            LoginCookie.SessionId.create(req, resp);
+            // トップページへ
             resp.sendRedirect(req.getContextPath() + "/domain1/login/top");
-
         } else {
             req.setAttribute("error", "ログインできません。");
             doGet(req, resp);
         }
     }
-
 }

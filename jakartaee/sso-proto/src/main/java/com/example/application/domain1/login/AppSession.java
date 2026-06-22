@@ -23,10 +23,11 @@ public class AppSession {
             resp.sendRedirect(req.getContextPath() + "/domain1/login/auth");
             return Optional.empty();
         }
+        // セッションデータを返す
         String id = (String) session.getAttribute("id");
-        Data appSession = new Data();
-        appSession.setId(id);
-        return Optional.of(appSession);
+        Data data = new Data();
+        data.setId(id);
+        return Optional.of(data);
     }
 
     protected static class Data {
