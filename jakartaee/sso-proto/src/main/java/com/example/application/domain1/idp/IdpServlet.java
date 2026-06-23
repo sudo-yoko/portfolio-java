@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/idp/auth")
 public class IdpServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(IdpServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [" + IdpServlet.class.getSimpleName() + "]: ";
+    private static final String LOG_PREFIX = ">>> [IDP]: " + IdpServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/idp/retry")
 public class RetryServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(RetryServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [" + RetryServlet.class.getSimpleName() + "]: ";
+    private static final String LOG_PREFIX = ">>> [IDP]: " + RetryServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -22,6 +22,13 @@ public class AppSession {
         session.setAttribute(CONSENT, consent);
     }
 
+    protected static void invalidate(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+    }
+
     protected static Boolean getConsent(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute(CONSENT) == null) {

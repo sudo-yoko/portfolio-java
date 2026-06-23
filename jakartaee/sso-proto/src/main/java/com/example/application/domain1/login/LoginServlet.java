@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/login/auth")
 public class LoginServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LoginServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [" + LoginServlet.class.getSimpleName() + "]: ";
+    private static final String LOG_PREFIX = ">>> [LOGIN]: " + LoginServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,17 +31,17 @@ public class LoginServlet extends HttpServlet {
             out.println("<head><title>ログイン</title></head>");
             out.println("<body>");
             out.println("<h2>ログイン</h2>");
-            // ログインエラーメッセージ
-            String error = (String) req.getAttribute("error");
-            if (error != null) {
-                out.println("<p style='color:red;'>" + error + "</p>");
-            }
             // フォームアクション
             String action = req.getContextPath() + "/domain1/login/auth";
             out.println("<form action='" + action + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
             out.println("<input type='password' name='password' value='123' placeholder='パスワード'><br><br>");
             out.println("<input type='submit' value='ログイン'>");
+            // ログインエラーメッセージ
+            String error = (String) req.getAttribute("error");
+            if (error != null) {
+                out.println("<p style='color:red;'>" + error + "</p>");
+            }
             out.println("</form>");
             out.println("</body>");
             out.println("</html>");

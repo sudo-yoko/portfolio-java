@@ -31,6 +31,13 @@ public class AppSession {
         return Optional.of(data);
     }
 
+    protected static void invalidate(HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+    }
+
     protected static class Data {
         // ログインID
         private String id;

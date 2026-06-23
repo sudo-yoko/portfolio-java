@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/login/top")
 public class TopServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(TopServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [" + TopServlet.class.getSimpleName() + "]: ";
+    private static final String LOG_PREFIX = ">>> [LOGIN]: " + TopServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,8 +47,13 @@ public class TopServlet extends HttpServlet {
             out.println("<h2>こんにちは、" + appSession.getId() + "さん！</h2>");
             out.println("<p>シングルサインオンの練習を始めましょう。</p>");
             // リンク先
-            String href = req.getContextPath() + "/domain1/idp/auth";
-            out.println("<p><a href='" + href + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
+            String href1 = req.getContextPath() + "/domain1/idp/auth";
+            out.println("<p><a href='" + href1 + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
+            out.println("<br><br>");
+
+            String href2 = req.getContextPath() + "/domain1/login/logout";
+            out.println("<p><a href='" + href2 + "'>ログアウトする</p>");
+
             out.println("</body>");
             out.println("</html>");
         }

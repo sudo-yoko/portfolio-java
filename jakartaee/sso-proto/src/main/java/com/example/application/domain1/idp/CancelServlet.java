@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/idp/cancel")
 public class CancelServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(CancelServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [" + CancelServlet.class.getSimpleName() + "]: ";
+    private static final String LOG_PREFIX = ">>> [IDP]: " + CancelServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

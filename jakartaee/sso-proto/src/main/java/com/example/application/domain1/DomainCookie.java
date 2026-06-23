@@ -24,6 +24,13 @@ public class DomainCookie {
             resp.addCookie(cookie);
         }
 
+        public static void kill(HttpServletRequest req, HttpServletResponse resp) {
+            Cookie cookie = new Cookie(SSO_SESSION_ID, "");
+            cookie.setPath(req.getContextPath() + "/domain1");
+            cookie.setMaxAge(0);
+            resp.addCookie(cookie);
+        }
+
         public static Optional<String> validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             String sessionId = null;
             Cookie[] cookies = req.getCookies();

@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/idp/consent")
 public class ConsentServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(ConsentServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [" + ConsentServlet.class.getSimpleName() + "]: ";
+    private static final String LOG_PREFIX = ">>> [IDP]: " + ConsentServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
