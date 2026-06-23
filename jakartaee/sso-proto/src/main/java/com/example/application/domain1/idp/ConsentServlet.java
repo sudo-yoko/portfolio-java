@@ -2,7 +2,6 @@ package com.example.application.domain1.idp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.example.application.domain1.DomainCookie;
@@ -26,8 +25,13 @@ public class ConsentServlet extends HttpServlet {
         logger.info(LOG_PREFIX + "doGet start.");
 
         // ログインクッキーの確認
-        Optional<String> sessionId = DomainCookie.SessionId.validate(req, resp);
-        if (!sessionId.isPresent()) {
+        String sessionId = DomainCookie.SessionId.validate(req, resp);
+        if (sessionId == null) {
+            return;
+        }
+        // セッションの確認
+        boolean valid = Session.validate(req, resp);
+        if (!valid) {
             return;
         }
 
@@ -54,9 +58,9 @@ public class ConsentServlet extends HttpServlet {
 
         String consent = req.getParameter("consent");
         if ("approve".equals(consent)) {
-            AppSession.create(req, true);
+            Session.setConsent(req, true);
         } else if ("deny".equals(consent)) {
-            AppSession.create(req, false);
+            Session.setConsent(req, false);
         } else {
 
         }

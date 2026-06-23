@@ -1,11 +1,9 @@
 package com.example.application.domain1.idp;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.example.application.domain1.DomainCookie;
-import com.example.application.domain1.idp.AppSession.Data;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,19 +24,19 @@ public class RetryServlet extends HttpServlet {
         logger.info(LOG_PREFIX + "doGet start.");
 
         // ログインクッキーの確認
-        Optional<String> cookie = DomainCookie.SessionId.validate(req, resp);
-        if (!cookie.isPresent()) {
+        String sessionId = DomainCookie.SessionId.validate(req, resp);
+        if (sessionId == null) {
             return;
         }
         // セッションの確認
-        Optional<Data> optAppSession = AppSession.validate(req, resp);
-        if (!optAppSession.isPresent()) {
+        boolean valid = Session.validate(req, resp);
+        if (!valid) {
             return;
         }
         // // セッションが無ければ作成する
         // AppSession.create(req);
         // 同意確認結果をクリアする
-        AppSession.setConsent(req, null);
+        Session.setConsent(req, null);
 
         resp.sendRedirect(req.getContextPath() + "/domain1/idp/auth");
     }

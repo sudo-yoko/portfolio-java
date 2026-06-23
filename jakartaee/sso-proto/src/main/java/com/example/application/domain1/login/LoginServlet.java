@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
 
         if ("admin".equals(id) && "123".equals(password)) {
             // ログイン成功。セッションを作成する
-            AppSession.create(req, id);
+            Session.create(req, id);
             // ログインクッキーを作成する
             DomainCookie.SessionId.create(req, resp);
             // トップページへ

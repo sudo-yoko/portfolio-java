@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
+import com.example.application.domain1.DomainCookie;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +20,17 @@ public class CancelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info(LOG_PREFIX + "doGet start.");
+
+        // ログインクッキーの確認
+        String sessionId = DomainCookie.SessionId.validate(req, resp);
+        if (sessionId == null) {
+            return;
+        }
+        // セッションの確認
+        boolean valid = Session.validate(req, resp);
+        if (!valid) {
+            return;
+        }
 
         resp.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = resp.getWriter()) {

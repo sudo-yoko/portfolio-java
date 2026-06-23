@@ -22,7 +22,7 @@ public class LogoutServlet extends HttpServlet {
         logger.info(LOG_PREFIX + "doGet start.");
 
         // アプリケーションセッションを破棄
-        AppSession.invalidate(req);
+        Session.invalidate(req);
 
         String callbackUri = req.getParameter("redirect_uri");
         if (callbackUri != null && !callbackUri.isBlank()) {

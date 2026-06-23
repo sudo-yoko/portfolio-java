@@ -25,7 +25,7 @@ public class LogoutServlet extends HttpServlet {
         logger.info(LOG_PREFIX + "doGet start.");
 
         // アプリケーションセッションを破棄
-        AppSession.invalidate(req);
+        Session.invalidate(req);
 
         // ドメインクッキーを破棄
         DomainCookie.SessionId.kill(req, resp);

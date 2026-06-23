@@ -2,11 +2,9 @@ package com.example.application.domain1.login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.example.application.domain1.DomainCookie;
-import com.example.application.domain1.login.AppSession.Data;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,33 +25,30 @@ public class TopServlet extends HttpServlet {
         logger.info(LOG_PREFIX + "doGet start.");
 
         // ログインクッキーの確認
-        Optional<String> sessionId = DomainCookie.SessionId.validate(req, resp);
-        if (!sessionId.isPresent()) {
+        String sessionId = DomainCookie.SessionId.validate(req, resp);
+        if (sessionId == null) {
             return;
         }
         // セッションの確認
-        Optional<Data> optAppSession = AppSession.validate(req, resp);
-        if (!optAppSession.isPresent()) {
+        String id = Session.validate(req, resp);
+        if (id == null) {
             return;
         }
-        Data appSession = optAppSession.get();
-        //
+
         resp.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = resp.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head><title>トップページ</title></head>");
             out.println("<body>");
-            out.println("<h2>こんにちは、" + appSession.getId() + "さん！</h2>");
+            out.println("<h2>こんにちは、" + id + "さん！</h2>");
             out.println("<p>シングルサインオンの練習を始めましょう。</p>");
-            // リンク先
-            String href1 = req.getContextPath() + "/domain1/idp/auth";
-            out.println("<p><a href='" + href1 + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
-            out.println("<br><br>");
-
-            String href2 = req.getContextPath() + "/domain1/login/logout";
-            out.println("<p><a href='" + href2 + "'>ログアウトする</p>");
-
+            // リンク先１
+            String idp = req.getContextPath() + "/domain1/idp/auth";
+            out.println("<p><a href='" + idp + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
+            // リンク先２
+            String logout = req.getContextPath() + "/domain1/login/logout";
+            out.println("<p><a href='" + logout + "'>ログアウトする</p>");
             out.println("</body>");
             out.println("</html>");
         }

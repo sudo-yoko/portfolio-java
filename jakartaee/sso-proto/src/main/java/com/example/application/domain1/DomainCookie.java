@@ -1,7 +1,6 @@
 package com.example.application.domain1;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +30,7 @@ public class DomainCookie {
             resp.addCookie(cookie);
         }
 
-        public static Optional<String> validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        public static String validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
             String sessionId = null;
             Cookie[] cookies = req.getCookies();
             if (cookies != null) {
@@ -44,9 +43,9 @@ public class DomainCookie {
             }
             if (sessionId == null) {
                 resp.sendRedirect(req.getContextPath() + "/domain1/login/auth");
-                return Optional.empty();
+                return null;
             }
-            return Optional.of(sessionId);
+            return sessionId;
         }
     }
 }
