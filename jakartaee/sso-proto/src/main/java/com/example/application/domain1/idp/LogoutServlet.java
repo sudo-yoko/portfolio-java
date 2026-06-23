@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * ログアウト
+ * Idpアプリ ログアウト
  */
 @WebServlet("/domain1/idp/logout")
 public class LogoutServlet extends HttpServlet {
@@ -21,12 +21,12 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info(LOG_PREFIX + "doGet start.");
 
-        // アプリケーションセッションを破棄
+        // ユーザーセッションを破棄
         Session.invalidate(req);
 
-        String callbackUri = req.getParameter("redirect_uri");
-        if (callbackUri != null && !callbackUri.isBlank()) {
-            resp.sendRedirect(callbackUri);
+        String callback = req.getParameter("callback");
+        if (callback != null && !callback.isBlank()) {
+            resp.sendRedirect(callback);
             return;
         }
         return;

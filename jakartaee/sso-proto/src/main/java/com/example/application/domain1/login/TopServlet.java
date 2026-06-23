@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * ログインアプリケーション トップページ
+ * ログインアプリ トップページ
  */
 @WebServlet("/domain1/login/top")
 public class TopServlet extends HttpServlet {
@@ -29,7 +29,7 @@ public class TopServlet extends HttpServlet {
         if (sessionId == null) {
             return;
         }
-        // セッションの確認
+        // ユーザーセッションの確認
         String id = Session.validate(req, resp);
         if (id == null) {
             return;
@@ -43,10 +43,11 @@ public class TopServlet extends HttpServlet {
             out.println("<body>");
             out.println("<h2>こんにちは、" + id + "さん！</h2>");
             out.println("<p>シングルサインオンの練習を始めましょう。</p>");
-            // リンク先１
-            String idp = req.getContextPath() + "/domain1/idp/auth";
-            out.println("<p><a href='" + idp + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
-            // リンク先２
+            // 認可
+            String authorization = req.getContextPath() + "/domain1/idp/auth";
+            out.println(
+                    "<p><a href='" + authorization + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
+            // ログアウト
             String logout = req.getContextPath() + "/domain1/login/logout";
             out.println("<p><a href='" + logout + "'>ログアウトする</p>");
             out.println("</body>");

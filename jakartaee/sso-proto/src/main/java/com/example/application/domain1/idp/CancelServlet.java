@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Idpアプリ SSOのキャンセル
+ */
 @WebServlet("/domain1/idp/cancel")
 public class CancelServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(CancelServlet.class.getName());

@@ -1,6 +1,9 @@
 package com.example.application.domain1;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * ドメイン属性付きCookie
  */
 public class DomainCookie {
+    private static final Logger logger = Logger.getLogger(DomainCookie.class.getName());
+    private static final String LOG_PREFIX = ">>> [LOGIN]: " + DomainCookie.class.getSimpleName() + ": ";
+
     private static final String SSO_SESSION_ID = "SSO_SESSION_ID";
 
     public static class SessionId {
@@ -42,7 +48,11 @@ public class DomainCookie {
                 }
             }
             if (sessionId == null) {
-                resp.sendRedirect(req.getContextPath() + "/domain1/login/auth");
+                logger.info(LOG_PREFIX + "cookie invalid.");
+                String authentication = req.getContextPath() + "/domain1/login/auth";
+                String callback = req.getRequestURI();
+                authentication += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
+                resp.sendRedirect(authentication);
                 return null;
             }
             return sessionId;

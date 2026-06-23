@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Identity Provider 認証処理
+ * Idpアプリ 認証処理
  */
 @WebServlet("/domain1/idp/auth")
 public class IdpServlet extends HttpServlet {

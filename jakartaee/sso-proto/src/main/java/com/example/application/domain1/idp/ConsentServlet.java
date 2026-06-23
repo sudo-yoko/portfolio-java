@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Identity Provider 同意確認ページ
+ * Idpアプリ 同意確認ページ
  */
 @WebServlet("/domain1/idp/consent")
 public class ConsentServlet extends HttpServlet {

@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * ログインアプリケーション ログインページ
+ * ログインアプリ ログインページ
  */
 @WebServlet("/domain1/login/auth")
 public class LoginServlet extends HttpServlet {
@@ -32,8 +32,12 @@ public class LoginServlet extends HttpServlet {
             out.println("<body>");
             out.println("<h2>ログイン</h2>");
             // フォームアクション
-            String action = req.getContextPath() + "/domain1/login/auth";
-            out.println("<form action='" + action + "' method='POST'>");
+            String authentication = req.getContextPath() + "/domain1/login/auth";
+            String callback = req.getParameter("callback");
+            if (callback != null && !callback.isBlank()) {
+                authentication += "?callback=" + callback;
+            }
+            out.println("<form action='" + authentication + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
             out.println("<input type='password' name='password' value='123' placeholder='パスワード'><br><br>");
             out.println("<input type='submit' value='ログイン'>");
@@ -63,8 +67,15 @@ public class LoginServlet extends HttpServlet {
             Session.create(req, id);
             // ログインクッキーを作成する
             DomainCookie.SessionId.create(req, resp);
+            //
+            String callback = req.getParameter("callback");
+            if (callback != null && !callback.isBlank()) {
+                resp.sendRedirect(callback);
+                return;
+            }
             // トップページへ
             resp.sendRedirect(req.getContextPath() + "/domain1/login/top");
+            return;
         } else {
             req.setAttribute("error", "ログインできません。");
             doGet(req, resp);

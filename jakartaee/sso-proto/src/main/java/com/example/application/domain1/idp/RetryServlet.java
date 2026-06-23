@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * 同意確認の再試行
+ * Idpアプリ SSOの再試行
  */
 @WebServlet("/domain1/idp/retry")
 public class RetryServlet extends HttpServlet {
@@ -33,8 +33,6 @@ public class RetryServlet extends HttpServlet {
         if (!valid) {
             return;
         }
-        // // セッションが無ければ作成する
-        // AppSession.create(req);
         // 同意確認結果をクリアする
         Session.setConsent(req, null);
 
