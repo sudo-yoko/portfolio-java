@@ -29,7 +29,6 @@ public class LogoutServlet extends HttpServlet {
             resp.sendRedirect(callback);
             return;
         }
-        return;
     }
 
 }

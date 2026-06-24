@@ -31,18 +31,19 @@ public class IdpServlet extends HttpServlet {
         // セッションが無ければ作成する
         Session.create(req);
 
-        // 同意確認されていない
+        // 同意確認
         Boolean consent = Session.getConsent(req);
+        // 同意確認されていない
         if (consent == null) {
             resp.sendRedirect(req.getContextPath() + "/domain1/idp/consent");
             return;
         }
-        // 同意していない
+        // 同意しない
         if (consent == false) {
             resp.sendRedirect(req.getContextPath() + "/domain1/idp/cancel");
             return;
         }
-        // 同意している
+        // 同意する
         resp.sendRedirect(req.getContextPath() + "/domain2/client/top");
     }
 }

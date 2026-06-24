@@ -42,8 +42,8 @@ public class ConsentServlet extends HttpServlet {
             out.println("<head><title>同意確認</title></head>");
             out.println("<body>");
             out.println("<h2>同意確認</h2>");
-            String action = req.getContextPath() + "/domain1/idp/consent";
-            out.println("<form action='" + action + "' method='POST'>");
+            String consent = req.getContextPath() + "/domain1/idp/consent";
+            out.println("<form action='" + consent + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
             out.println("<button type='submit' name='consent' value='deny'>同意しない</button>");
             out.println("</form>");

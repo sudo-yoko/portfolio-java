@@ -16,12 +16,21 @@ public class Session {
     private static final Logger logger = Logger.getLogger(Session.class.getName());
     private static final String LOG_PREFIX = ">>> [LOGIN]: " + Session.class.getSimpleName() + ": ";
 
+    /**
+     * 同意確認
+     */
     private static final String CONSENT = "consent";
 
+    /**
+     * ユーザーセッションを作成する
+     */
     protected static void create(HttpServletRequest req) {
         req.getSession(true);
     }
 
+    /**
+     * ユーザーセッションを破棄する
+     */
     protected static void invalidate(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session != null) {

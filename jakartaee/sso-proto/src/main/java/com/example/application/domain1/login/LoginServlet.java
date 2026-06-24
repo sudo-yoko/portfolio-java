@@ -2,6 +2,8 @@ package com.example.application.domain1.login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 import com.example.application.domain1.DomainCookie;
@@ -35,7 +37,7 @@ public class LoginServlet extends HttpServlet {
             String authentication = req.getContextPath() + "/domain1/login/auth";
             String callback = req.getParameter("callback");
             if (callback != null && !callback.isBlank()) {
-                authentication += "?callback=" + callback;
+                authentication += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
             }
             out.println("<form action='" + authentication + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
