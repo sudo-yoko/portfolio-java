@@ -3,6 +3,8 @@ package com.example.application.domain2.rp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import com.example.application.CallbackUrl;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -33,12 +35,12 @@ public class AuthServlet extends HttpServlet {
         // ユーザーセッションを作成する
         Session.create(req, token);
 
-        String callback = req.getParameter("callback"); // NOTE: getParameterはデコード済みを返す
-        if (callback == null || callback.isBlank()) {
-            resp.sendRedirect(req.getContextPath() + "/domain2/rp/top");
+        CallbackUrl callback = new CallbackUrl(req);
+        if (callback.hasValue()) {
+            resp.sendRedirect(callback.getValue());
             return;
         }
-        resp.sendRedirect(callback);
+        resp.sendRedirect(req.getContextPath() + "/domain2/rp/top");
         return;
     }
 

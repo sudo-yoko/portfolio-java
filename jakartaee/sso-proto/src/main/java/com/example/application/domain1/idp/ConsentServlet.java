@@ -2,11 +2,9 @@ package com.example.application.domain1.idp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-import com.example.application.SsoUtil;
+import com.example.application.CallbackUrl;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -47,9 +45,9 @@ public class ConsentServlet extends HttpServlet {
             out.println("<body style='background-color: #FFFFE0;'>");
             out.println("<h2>同意確認</h2>");
             String consent = req.getContextPath() + "/domain1/idp/consent";
-            String callback = req.getParameter("callback");
-            if (callback != null && !callback.isBlank()) {
-                consent += "?callback=" + SsoUtil.urlEncode(callback);
+            CallbackUrl callback = new CallbackUrl(req);
+            if (callback.hasValue()) {
+                consent += "?" + callback.toQueryString();
             }
             out.println("<form action='" + consent + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
@@ -74,9 +72,10 @@ public class ConsentServlet extends HttpServlet {
 
         }
         String redirect = req.getContextPath() + "/domain1/idp/auth";
-        String callback = req.getParameter("callback");
-        if (callback != null && !callback.isBlank()) {
-            redirect += "?callback=" + SsoUtil.urlEncode(callback);
+
+        CallbackUrl callback = new CallbackUrl(req);
+        if (callback.hasValue()) {
+            redirect += "?" + callback.toQueryString();
         }
         resp.sendRedirect(redirect);
     }

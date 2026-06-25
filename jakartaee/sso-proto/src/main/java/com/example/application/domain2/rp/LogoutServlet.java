@@ -1,4 +1,4 @@
-package com.example.application.domain1.idp;
+package com.example.application.domain2.rp;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -12,12 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Idpアプリ ログアウト
+ * ログインアプリ ログアウト
  */
-@WebServlet("/domain1/idp/logout")
+@WebServlet("/domain2/rp/logout")
 public class LogoutServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LogoutServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [IDP]: " + LogoutServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP]: " + LogoutServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -29,11 +29,11 @@ public class LogoutServlet extends HttpServlet {
 
         CallbackUrl callback = new CallbackUrl(req);
         if (callback.hasValue()) {
-            String redirect = req.getContextPath() + "/domain2/rp/logout";
-            redirect += "?" + callback.toQueryString();
-            resp.sendRedirect(redirect);
+            resp.sendRedirect(callback.getValue());
             return;
         }
     }
+
+    // TODO: オープンリダイレクタ対応
 
 }

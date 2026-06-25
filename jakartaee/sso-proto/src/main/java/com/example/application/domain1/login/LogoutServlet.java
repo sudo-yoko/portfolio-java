@@ -1,10 +1,9 @@
 package com.example.application.domain1.login;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+import com.example.application.CallbackUrl;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -33,8 +32,8 @@ public class LogoutServlet extends HttpServlet {
         DomainCookie.SessionId.kill(req, resp);
 
         String logout = req.getContextPath() + "/domain1/idp/logout";
-        String callback = req.getContextPath() + "/domain1/login/auth";
-        logout += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
+        CallbackUrl callback = new CallbackUrl(req.getContextPath() + "/domain1/login/auth");
+        logout += "?" + callback.toQueryString();
         resp.sendRedirect(logout);
         return;
     }

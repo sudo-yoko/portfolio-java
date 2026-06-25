@@ -1,11 +1,9 @@
 package com.example.application.domain1;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-import com.example.application.SsoUtil;
+import com.example.application.CallbackUrl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class DomainCookie {
     private static final Logger logger = Logger.getLogger(DomainCookie.class.getName());
-    private static final String LOG_PREFIX = ">>> [LOGIN]: " + DomainCookie.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [DOMAIN1]: " + DomainCookie.class.getSimpleName() + ": ";
 
     private static final String SSO_SESSION_ID = "SSO_SESSION_ID";
 
@@ -36,6 +34,7 @@ public class DomainCookie {
             cookie.setPath(req.getContextPath() + "/domain1");
             cookie.setMaxAge(0);
             resp.addCookie(cookie);
+            logger.info(LOG_PREFIX + "cookie invalidated.");
         }
 
         public static String validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -52,11 +51,12 @@ public class DomainCookie {
             if (sessionId == null) {
                 logger.severe(LOG_PREFIX + "cookie invalid.");
                 String authentication = req.getContextPath() + "/domain1/login/auth";
-                String callback = req.getParameter("callback");
-                if (callback == null || callback.isBlank()) {
-                    callback = req.getRequestURI();
+
+                CallbackUrl callback = new CallbackUrl(req);
+                if (!callback.hasValue()) {
+                    callback = new CallbackUrl(req.getRequestURI());
                 }
-                authentication += "?callback=" + SsoUtil.urlEncode(callback);
+                authentication += "?" + callback.toQueryString();
                 resp.sendRedirect(authentication);
                 return null;
             }

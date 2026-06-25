@@ -3,7 +3,7 @@ package com.example.application.domain1.idp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.SsoUtil;
+import com.example.application.CallbackUrl;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -33,15 +33,15 @@ public class IdpServlet extends HttpServlet {
         // セッションが無ければ作成する
         Session.create(req);
 
-        String callback = req.getParameter("callback");
+        CallbackUrl callback = new CallbackUrl(req);
 
         // 同意確認
         Boolean consent = Session.getConsent(req);
         // 同意確認されていない
         if (consent == null) {
             String redirect = req.getContextPath() + "/domain1/idp/consent";
-            if (callback != null && !callback.isBlank()) {
-                redirect += "?callback=" + SsoUtil.urlEncode(callback);
+            if (callback.hasValue()) {
+                redirect += "?" + callback.toQueryString();
             }
             resp.sendRedirect(redirect);
             return;
@@ -49,20 +49,19 @@ public class IdpServlet extends HttpServlet {
         // 同意しない
         if (consent == false) {
             String redirect = req.getContextPath() + "/domain1/idp/cancel";
-            if (callback != null && !callback.isBlank()) {
-                redirect += "?callback=" + callback;
+            if (callback.hasValue()) {
+                redirect += "?" + callback.toQueryString();
             }
             resp.sendRedirect(redirect);
             return;
         }
         // 同意する
         String token = "proto-token-456";
-        if (callback != null && !callback.isBlank()) {
-            callback = SsoUtil.appendQueryParam(callback, "token=" + token);
-            resp.sendRedirect(callback);
+        if (callback.hasValue()) {
+            resp.sendRedirect(callback.appendQueryParam("token=" + token).getValue());
             return;
         } else {
-            String redirect = req.getContextPath() + "/domain2/rp/top";
+            String redirect = req.getContextPath() + "/domain2/rp/auth";
             redirect += "?token=" + token;
             resp.sendRedirect(redirect);
             return;

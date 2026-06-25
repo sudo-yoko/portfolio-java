@@ -2,11 +2,9 @@ package com.example.application.domain1.login;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-import com.example.application.SsoUtil;
+import com.example.application.CallbackUrl;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -37,9 +35,9 @@ public class LoginServlet extends HttpServlet {
             out.println("<h2>ログイン</h2>");
             // フォームアクション
             String authentication = req.getContextPath() + "/domain1/login/auth";
-            String callback = req.getParameter("callback");
-            if (callback != null && !callback.isBlank()) {
-                authentication += "?callback=" + SsoUtil.urlEncode(callback);
+            CallbackUrl callback = new CallbackUrl(req);
+            if (callback.hasValue()) {
+                authentication += "?" + callback.toQueryString();
             }
             out.println("<form action='" + authentication + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
@@ -73,10 +71,10 @@ public class LoginServlet extends HttpServlet {
             // ログインクッキーを作成する
             DomainCookie.SessionId.create(req, resp);
             //
-            String callback = req.getParameter("callback");
-            if (callback != null && !callback.isBlank()) {
+            CallbackUrl callback = new CallbackUrl(req);
+            if (callback.hasValue()) {
                 String redirect = req.getContextPath() + "/domain1/idp/auth";
-                redirect += "?callback=" + SsoUtil.urlEncode(callback);
+                redirect += "?" + callback.toQueryString();
                 resp.sendRedirect(redirect);
                 return;
             }

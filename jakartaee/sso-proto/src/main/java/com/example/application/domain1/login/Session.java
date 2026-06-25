@@ -1,9 +1,9 @@
 package com.example.application.domain1.login;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
+
+import com.example.application.CallbackUrl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +32,7 @@ public class Session {
     protected static void invalidate(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session != null) {
+            logger.info(LOG_PREFIX + "session invalidated.");
             session.invalidate();
         }
     }
@@ -44,8 +45,8 @@ public class Session {
         if (session == null || session.getAttribute(ID) == null) {
             logger.severe(LOG_PREFIX + "session invalid.");
             String authentication = req.getContextPath() + "/domain1/login/auth";
-            String callback = req.getRequestURI();
-            authentication += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
+            CallbackUrl callback = new CallbackUrl(req.getRequestURI());
+            authentication += "?" + callback.toQueryString();
             resp.sendRedirect(authentication);
             return null;
         }
