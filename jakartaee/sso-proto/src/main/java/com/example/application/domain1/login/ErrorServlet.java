@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain1/login/error")
 public class ErrorServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(ErrorServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [CLIENT]: " + ErrorServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [LOGIN]: " + ErrorServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

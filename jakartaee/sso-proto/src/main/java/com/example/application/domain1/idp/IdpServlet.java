@@ -62,7 +62,7 @@ public class IdpServlet extends HttpServlet {
             resp.sendRedirect(callback);
             return;
         } else {
-            String redirect = req.getContextPath() + "/domain2/client/top";
+            String redirect = req.getContextPath() + "/domain2/rp/top";
             redirect += "?token=" + token;
             resp.sendRedirect(redirect);
             return;

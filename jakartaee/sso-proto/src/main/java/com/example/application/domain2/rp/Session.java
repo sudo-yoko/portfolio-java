@@ -1,4 +1,4 @@
-package com.example.application.domain2.client;
+package com.example.application.domain2.rp;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
  */
 public class Session {
     private static final Logger logger = Logger.getLogger(Session.class.getName());
-    private static final String LOG_PREFIX = ">>> [CLIENT]: " + Session.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP]: " + Session.class.getSimpleName() + ": ";
 
     private static final String TOKEN = "token";
 
@@ -45,14 +45,14 @@ public class Session {
             logger.severe(LOG_PREFIX + "session invalid.");
             // 認可
             String authorization = req.getContextPath() + "/domain1/idp/auth";
-            String callback = req.getContextPath() + "/domain2/client/auth";
+            String callback = req.getContextPath() + "/domain2/rp/auth";
             String clientId = "appB";
             String redirect = authorization + "?clientId=" + clientId;
             redirect += "&callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
             resp.sendRedirect(redirect);
             return null;
         }
-        return "";
+        return (String) session.getAttribute(TOKEN);
     }
 
 }

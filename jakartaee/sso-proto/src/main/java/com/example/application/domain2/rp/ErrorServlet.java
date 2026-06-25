@@ -1,4 +1,4 @@
-package com.example.application.domain2.client;
+package com.example.application.domain2.rp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,10 +13,10 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * RPアプリ エラーページ
  */
-@WebServlet("/domain2/client/error")
+@WebServlet("/domain2/rp/error")
 public class ErrorServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(ErrorServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [CLIENT]: " + ErrorServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP]: " + ErrorServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

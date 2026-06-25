@@ -1,4 +1,4 @@
-package com.example.application.domain2.client;
+package com.example.application.domain2.rp;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -12,10 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * RPアプリ 認証
  */
-@WebServlet("/domain2/client/auth")
+@WebServlet("/domain2/rp/auth")
 public class AuthServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(AuthServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [CLIENT]: " + AuthServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP]: " + AuthServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,7 +26,7 @@ public class AuthServlet extends HttpServlet {
         String token = req.getParameter("token");
         if (token == null || token.isBlank()) {
             logger.severe(LOG_PREFIX + "token invalid.");
-            resp.sendRedirect(req.getContextPath() + "/domain2/client/error");
+            resp.sendRedirect(req.getContextPath() + "/domain2/rp/error");
             return;
         }
 
@@ -35,7 +35,7 @@ public class AuthServlet extends HttpServlet {
 
         String callback = req.getParameter("callback");
         if (callback == null || callback.isBlank()) {
-            resp.sendRedirect(req.getContextPath() + "/domain2/client/top");
+            resp.sendRedirect(req.getContextPath() + "/domain2/rp/top");
             return;
         }
         resp.sendRedirect(callback);
