@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+import com.example.application.SsoUtil;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -38,7 +39,7 @@ public class LoginServlet extends HttpServlet {
             String authentication = req.getContextPath() + "/domain1/login/auth";
             String callback = req.getParameter("callback");
             if (callback != null && !callback.isBlank()) {
-                authentication += "?callback=" + callback;
+                authentication += "?callback=" + SsoUtil.urlEncode(callback);
             }
             out.println("<form action='" + authentication + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
@@ -75,7 +76,7 @@ public class LoginServlet extends HttpServlet {
             String callback = req.getParameter("callback");
             if (callback != null && !callback.isBlank()) {
                 String redirect = req.getContextPath() + "/domain1/idp/auth";
-                redirect += "?callback=" + callback;
+                redirect += "?callback=" + SsoUtil.urlEncode(callback);
                 resp.sendRedirect(redirect);
                 return;
             }

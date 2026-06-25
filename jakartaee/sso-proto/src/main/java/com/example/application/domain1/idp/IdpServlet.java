@@ -41,7 +41,7 @@ public class IdpServlet extends HttpServlet {
         if (consent == null) {
             String redirect = req.getContextPath() + "/domain1/idp/consent";
             if (callback != null && !callback.isBlank()) {
-                redirect += "?callback=" + callback;
+                redirect += "?callback=" + SsoUtil.urlEncode(callback);
             }
             resp.sendRedirect(redirect);
             return;

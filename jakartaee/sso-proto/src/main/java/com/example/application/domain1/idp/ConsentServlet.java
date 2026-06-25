@@ -2,8 +2,11 @@ package com.example.application.domain1.idp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+import com.example.application.SsoUtil;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -46,7 +49,7 @@ public class ConsentServlet extends HttpServlet {
             String consent = req.getContextPath() + "/domain1/idp/consent";
             String callback = req.getParameter("callback");
             if (callback != null && !callback.isBlank()) {
-                consent += "?callback=" + callback;
+                consent += "?callback=" + SsoUtil.urlEncode(callback);
             }
             out.println("<form action='" + consent + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
@@ -73,7 +76,7 @@ public class ConsentServlet extends HttpServlet {
         String redirect = req.getContextPath() + "/domain1/idp/auth";
         String callback = req.getParameter("callback");
         if (callback != null && !callback.isBlank()) {
-            redirect += "?callback=" + callback;
+            redirect += "?callback=" + SsoUtil.urlEncode(callback);
         }
         resp.sendRedirect(redirect);
     }

@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+import com.example.application.SsoUtil;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,7 +56,7 @@ public class DomainCookie {
                 if (callback == null || callback.isBlank()) {
                     callback = req.getRequestURI();
                 }
-                authentication += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
+                authentication += "?callback=" + SsoUtil.urlEncode(callback);
                 resp.sendRedirect(authentication);
                 return null;
             }

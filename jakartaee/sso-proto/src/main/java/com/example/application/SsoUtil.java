@@ -1,21 +1,9 @@
 package com.example.application;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 public class SsoUtil {
-    // public static String[] splitQueryString(String url) {
-    // String parts[] = url.split("\\?");
-
-    // if (parts.length < 2 || parts[1].isBlank()) {
-    // return new String[0];
-    // }
-    // return parts[1].split("&");
-    // }
-
-    // public static String joinQueryString(String params[]) {
-    // if (params == null) {
-    // return "";
-    // }
-    // return String.join("&", params);
-    // }
 
     public static String appendQueryParam(String url, String param) {
         if (param == null || param.isBlank()) {
@@ -27,5 +15,9 @@ public class SsoUtil {
         }
 
         return url + "?" + param;
+    }
+
+    public static String urlEncode(String callback) {
+        return URLEncoder.encode(callback, StandardCharsets.UTF_8);
     }
 }

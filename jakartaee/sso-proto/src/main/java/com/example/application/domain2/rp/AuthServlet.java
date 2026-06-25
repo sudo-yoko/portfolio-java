@@ -33,7 +33,7 @@ public class AuthServlet extends HttpServlet {
         // ユーザーセッションを作成する
         Session.create(req, token);
 
-        String callback = req.getParameter("callback");
+        String callback = req.getParameter("callback"); // NOTE: getParameterはデコード済みを返す
         if (callback == null || callback.isBlank()) {
             resp.sendRedirect(req.getContextPath() + "/domain2/rp/top");
             return;
