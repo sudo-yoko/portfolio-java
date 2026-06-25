@@ -22,7 +22,8 @@ public class CancelServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doGet start.");
+        logger.info(LOG_PREFIX
+                + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         // ログインクッキーの確認
         String sessionId = DomainCookie.SessionId.validate(req, resp);
@@ -40,7 +41,7 @@ public class CancelServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head><title>トップページ</title></head>");
-            out.println("<body>");
+            out.println("<body style='background-color: #FFFFE0;'>");
             out.println("<h2>シングルサインオンをキャンセルしました！</h2>");
             out.println("<p>練習は順調です。</p>");
             // リンク先

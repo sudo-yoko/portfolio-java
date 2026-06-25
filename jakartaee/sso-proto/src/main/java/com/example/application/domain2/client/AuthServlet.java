@@ -1,7 +1,6 @@
 package com.example.application.domain2.client;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import jakarta.servlet.ServletException;
@@ -20,18 +19,27 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doGet start.");
+        logger.info(LOG_PREFIX
+                + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
-        resp.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = resp.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head><title>工事中</title></head>");
-            out.println("<body>");
-            out.println("<p>シングルサインオンの練習は順調です。</p>");
-            out.println("</body>");
-            out.println("</html>");
+        // アクセストークンチェック
+        String token = req.getParameter("token");
+        if (token == null || token.isBlank()) {
+            logger.severe(LOG_PREFIX + "token invalid.");
+            resp.sendRedirect(req.getContextPath() + "/domain2/client/error");
+            return;
         }
+
+        // ユーザーセッションを作成する
+        Session.create(req, token);
+
+        String callback = req.getParameter("callback");
+        if (callback == null || callback.isBlank()) {
+            resp.sendRedirect(req.getContextPath() + "/domain2/client/top");
+            return;
+        }
+        resp.sendRedirect(callback);
+        return;
     }
 
 }

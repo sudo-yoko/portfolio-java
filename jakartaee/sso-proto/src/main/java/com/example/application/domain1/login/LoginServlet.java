@@ -24,7 +24,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doGet start.");
+        logger.info(LOG_PREFIX
+                + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         resp.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = resp.getWriter()) {
@@ -37,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             String authentication = req.getContextPath() + "/domain1/login/auth";
             String callback = req.getParameter("callback");
             if (callback != null && !callback.isBlank()) {
-                authentication += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
+                authentication += "?callback=" + callback;
             }
             out.println("<form action='" + authentication + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
@@ -56,7 +57,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doPost start.");
+        logger.info(LOG_PREFIX
+                + String.format("doPost start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         String id = req.getParameter("id");
         String password = req.getParameter("password");
@@ -72,7 +74,9 @@ public class LoginServlet extends HttpServlet {
             //
             String callback = req.getParameter("callback");
             if (callback != null && !callback.isBlank()) {
-                resp.sendRedirect(callback);
+                String redirect = req.getContextPath() + "/domain1/idp/auth";
+                redirect += "?callback=" + callback;
+                resp.sendRedirect(redirect);
                 return;
             }
             // トップページへ

@@ -23,7 +23,8 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doGet start.");
+        logger.info(LOG_PREFIX
+                + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         // ユーザーセッションを破棄
         Session.invalidate(req);

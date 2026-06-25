@@ -54,7 +54,7 @@ public class Session {
     protected static boolean validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
         if (session == null) {
-            logger.info(LOG_PREFIX + "session invalid.");
+            logger.severe(LOG_PREFIX + "session invalid.");
             String authorization = req.getContextPath() + "/domain1/idp/auth";
             String callback = req.getRequestURI();
             authorization += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);

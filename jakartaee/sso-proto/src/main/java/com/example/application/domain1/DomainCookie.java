@@ -48,9 +48,12 @@ public class DomainCookie {
                 }
             }
             if (sessionId == null) {
-                logger.info(LOG_PREFIX + "cookie invalid.");
+                logger.severe(LOG_PREFIX + "cookie invalid.");
                 String authentication = req.getContextPath() + "/domain1/login/auth";
-                String callback = req.getRequestURI();
+                String callback = req.getParameter("callback");
+                if (callback == null || callback.isBlank()) {
+                    callback = req.getRequestURI();
+                }
                 authentication += "?callback=" + URLEncoder.encode(callback, StandardCharsets.UTF_8);
                 resp.sendRedirect(authentication);
                 return null;

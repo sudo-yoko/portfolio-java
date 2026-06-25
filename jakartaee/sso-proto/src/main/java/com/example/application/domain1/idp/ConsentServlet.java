@@ -22,7 +22,8 @@ public class ConsentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doGet start.");
+        logger.info(LOG_PREFIX
+                + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         // ログインクッキーの確認
         String sessionId = DomainCookie.SessionId.validate(req, resp);
@@ -40,9 +41,13 @@ public class ConsentServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head><title>同意確認</title></head>");
-            out.println("<body>");
+            out.println("<body style='background-color: #FFFFE0;'>");
             out.println("<h2>同意確認</h2>");
             String consent = req.getContextPath() + "/domain1/idp/consent";
+            String callback = req.getParameter("callback");
+            if (callback != null && !callback.isBlank()) {
+                consent += "?callback=" + callback;
+            }
             out.println("<form action='" + consent + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
             out.println("<button type='submit' name='consent' value='deny'>同意しない</button>");
@@ -54,7 +59,8 @@ public class ConsentServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        logger.info(LOG_PREFIX + "doPost start.");
+        logger.info(LOG_PREFIX
+                + String.format("doPost start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         String consent = req.getParameter("consent");
         if ("approve".equals(consent)) {
@@ -64,7 +70,12 @@ public class ConsentServlet extends HttpServlet {
         } else {
 
         }
-        resp.sendRedirect(req.getContextPath() + "/domain1/idp/auth");
+        String redirect = req.getContextPath() + "/domain1/idp/auth";
+        String callback = req.getParameter("callback");
+        if (callback != null && !callback.isBlank()) {
+            redirect += "?callback=" + callback;
+        }
+        resp.sendRedirect(redirect);
     }
 
 }
