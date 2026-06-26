@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -44,12 +45,15 @@ public class ConsentServlet extends HttpServlet {
             out.println("<head><title>同意確認</title></head>");
             out.println("<body style='background-color: #FFFFE0;'>");
             out.println("<h2>同意確認</h2>");
-            String consent = req.getContextPath() + "/domain1/idp/consent";
-            CallbackUrl callback = new CallbackUrl(req);
+            // String consent = req.getContextPath() + "/domain1/idp/consent";
+            UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
+            // CallbackUrl callback = new CallbackUrl(req);
+            CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
-                consent += "?" + callback.toQueryString();
+                // consent += "?" + callback.toQueryString();
+                consent.appendQueryString(callback.toQueryString());
             }
-            out.println("<form action='" + consent + "' method='POST'>");
+            out.println("<form action='" + consent.build() + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
             out.println("<button type='submit' name='consent' value='deny'>同意しない</button>");
             out.println("</form>");
@@ -71,13 +75,17 @@ public class ConsentServlet extends HttpServlet {
         } else {
 
         }
-        String redirect = req.getContextPath() + "/domain1/idp/auth";
+        // String redirect = req.getContextPath() + "/domain1/idp/auth";
+        UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
 
-        CallbackUrl callback = new CallbackUrl(req);
+        // CallbackUrl callback = new CallbackUrl(req);
+        CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
-            redirect += "?" + callback.toQueryString();
+            // redirect += "?" + callback.toQueryString();
+            redirect.appendQueryString(callback.toQueryString());
         }
-        resp.sendRedirect(redirect);
+
+        resp.sendRedirect(redirect.build());
     }
 
 }

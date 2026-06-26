@@ -3,7 +3,8 @@ package com.example.application.domain2.rp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,16 +45,21 @@ public class Session {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute(TOKEN) == null) {
             logger.severe(LOG_PREFIX + "session invalid.");
-            // 認可
-            String authorization = req.getContextPath() + "/domain1/idp/auth";
-
             String clientId = "appB";
-            String redirect = authorization + "?clientId=" + clientId;
 
-            CallbackUrl callback = new CallbackUrl(req.getContextPath() + "/domain2/rp/auth");
-            redirect += "&" + callback.toQueryString();
+            // String authorization = req.getContextPath() + "/domain1/idp/auth";
+            // String redirect = authorization + "?clientId=" + clientId;
+            // CallbackUrl callback = new CallbackUrl(req.getContextPath() +
+            // "/domain2/rp/auth");
+            // redirect += "&" + callback.toQueryString();
+            // resp.sendRedirect(redirect);
+            UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
+            UrlBuilder redirect = new UrlBuilder(authorization.build());
+            redirect.appendQueryParam("clientId", clientId);
+            CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain2/rp/auth");
+            redirect.appendQueryString(callback.toQueryString());
+            resp.sendRedirect(redirect.build());
 
-            resp.sendRedirect(redirect);
             return null;
         }
         return (String) session.getAttribute(TOKEN);

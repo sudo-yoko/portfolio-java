@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -34,12 +35,17 @@ public class LoginServlet extends HttpServlet {
             out.println("<body>");
             out.println("<h2>ログイン</h2>");
             // フォームアクション
-            String authentication = req.getContextPath() + "/domain1/login/auth";
-            CallbackUrl callback = new CallbackUrl(req);
+            // String authentication = req.getContextPath() + "/domain1/login/auth";
+            // CallbackUrl callback = new CallbackUrl(req);
+            // if (callback.hasValue()) {
+            // authentication += "?" + callback.toQueryString();
+            // }
+            UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
+            CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
-                authentication += "?" + callback.toQueryString();
+                authentication.appendQueryString(callback.toQueryString());
             }
-            out.println("<form action='" + authentication + "' method='POST'>");
+            out.println("<form action='" + authentication.build() + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
             out.println("<input type='password' name='password' value='123' placeholder='パスワード'><br><br>");
             out.println("<input type='submit' value='ログイン'>");
@@ -71,13 +77,21 @@ public class LoginServlet extends HttpServlet {
             // ログインクッキーを作成する
             DomainCookie.SessionId.create(req, resp);
             //
-            CallbackUrl callback = new CallbackUrl(req);
+            // CallbackUrl callback = new CallbackUrl(req);
+            // if (callback.hasValue()) {
+            // String redirect = req.getContextPath() + "/domain1/idp/auth";
+            // redirect += "?" + callback.toQueryString();
+            // resp.sendRedirect(redirect);
+            // return;
+            // }
+            CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
-                String redirect = req.getContextPath() + "/domain1/idp/auth";
-                redirect += "?" + callback.toQueryString();
-                resp.sendRedirect(redirect);
+                UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
+                redirect.appendQueryString(callback.toQueryString());
+                resp.sendRedirect(redirect.build());
                 return;
             }
+
             // トップページへ
             resp.sendRedirect(req.getContextPath() + "/domain1/login/top");
             return;

@@ -3,7 +3,8 @@ package com.example.application.domain1.idp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -33,37 +34,47 @@ public class IdpServlet extends HttpServlet {
         // セッションが無ければ作成する
         Session.create(req);
 
-        CallbackUrl callback = new CallbackUrl(req);
+        // CallbackUrl callback = new CallbackUrl(req);
+        CallbackBuilder callback = new CallbackBuilder(req);
 
         // 同意確認
         Boolean consent = Session.getConsent(req);
         // 同意確認されていない
         if (consent == null) {
-            String redirect = req.getContextPath() + "/domain1/idp/consent";
+            // String redirect = req.getContextPath() + "/domain1/idp/consent";
+            UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
             if (callback.hasValue()) {
-                redirect += "?" + callback.toQueryString();
+                // redirect += "?" + callback.toQueryString();
+                redirect.appendQueryString(callback.toQueryString());
             }
-            resp.sendRedirect(redirect);
+            resp.sendRedirect(redirect.build());
             return;
         }
         // 同意しない
         if (consent == false) {
-            String redirect = req.getContextPath() + "/domain1/idp/cancel";
+            // String redirect = req.getContextPath() + "/domain1/idp/cancel";
+            UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/cancel");
             if (callback.hasValue()) {
-                redirect += "?" + callback.toQueryString();
+                // redirect += "?" + callback.toQueryString();
+                redirect.appendQueryString(callback.toQueryString());
             }
-            resp.sendRedirect(redirect);
+            resp.sendRedirect(redirect.build());
             return;
         }
         // 同意する
         String token = "proto-token-456";
         if (callback.hasValue()) {
-            resp.sendRedirect(callback.appendQueryParam("token=" + token).getValue());
+            // TODO: 値オブジェクトではなく、ビルダーパターンでの実装も検討
+            // resp.sendRedirect(callback.appendQueryParam("token=" + token).getValue());
+            callback.appendQueryParam("token", token);
+            resp.sendRedirect(callback.build());
             return;
         } else {
-            String redirect = req.getContextPath() + "/domain2/rp/auth";
-            redirect += "?token=" + token;
-            resp.sendRedirect(redirect);
+            // String redirect = req.getContextPath() + "/domain2/rp/auth";
+            // redirect += "?token=" + token;
+            UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/auth");
+            redirect.appendQueryParam("token", token);
+            resp.sendRedirect(redirect.build());
             return;
         }
     }

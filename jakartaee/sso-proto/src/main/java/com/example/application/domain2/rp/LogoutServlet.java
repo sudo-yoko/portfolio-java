@@ -3,7 +3,7 @@ package com.example.application.domain2.rp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,9 +27,14 @@ public class LogoutServlet extends HttpServlet {
         // ユーザーセッションを破棄
         Session.invalidate(req);
 
-        CallbackUrl callback = new CallbackUrl(req);
+        // CallbackUrl callback = new CallbackUrl(req);
+        // if (callback.hasValue()) {
+        // resp.sendRedirect(callback.getValue());
+        // return;
+        // }
+        CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
-            resp.sendRedirect(callback.getValue());
+            resp.sendRedirect(callback.build());
             return;
         }
     }

@@ -3,7 +3,8 @@ package com.example.application.domain1.login;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -31,10 +32,15 @@ public class LogoutServlet extends HttpServlet {
         // ドメインクッキーを破棄
         DomainCookie.SessionId.kill(req, resp);
 
-        String logout = req.getContextPath() + "/domain1/idp/logout";
-        CallbackUrl callback = new CallbackUrl(req.getContextPath() + "/domain1/login/auth");
-        logout += "?" + callback.toQueryString();
-        resp.sendRedirect(logout);
+        // String logout = req.getContextPath() + "/domain1/idp/logout";
+        // CallbackUrl callback = new CallbackUrl(req.getContextPath() +
+        // "/domain1/login/auth");
+        // logout += "?" + callback.toQueryString();
+        // resp.sendRedirect(logout);
+        UrlBuilder logout = new UrlBuilder(req.getContextPath() + "/domain1/idp/logout");
+        CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain1/login/auth");
+        logout.appendQueryString(callback.toQueryString());
+        resp.sendRedirect(logout.build());
         return;
     }
 

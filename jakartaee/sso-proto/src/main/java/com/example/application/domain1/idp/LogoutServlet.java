@@ -3,7 +3,8 @@ package com.example.application.domain1.idp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,11 +28,14 @@ public class LogoutServlet extends HttpServlet {
         // ユーザーセッションを破棄
         Session.invalidate(req);
 
-        CallbackUrl callback = new CallbackUrl(req);
+        // CallbackUrl callback = new CallbackUrl(req);
+        CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
-            String redirect = req.getContextPath() + "/domain2/rp/logout";
-            redirect += "?" + callback.toQueryString();
-            resp.sendRedirect(redirect);
+            // String redirect = req.getContextPath() + "/domain2/rp/logout";
+            UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/logout");
+            // redirect += "?" + callback.toQueryString();
+            redirect.appendQueryString(callback.toQueryString());
+            resp.sendRedirect(redirect.build());
             return;
         }
     }

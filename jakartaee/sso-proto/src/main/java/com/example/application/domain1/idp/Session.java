@@ -3,7 +3,8 @@ package com.example.application.domain1.idp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,11 +57,14 @@ public class Session {
         HttpSession session = req.getSession(false);
         if (session == null) {
             logger.severe(LOG_PREFIX + "session invalid.");
-            String authorization = req.getContextPath() + "/domain1/idp/auth";
+            // String authorization = req.getContextPath() + "/domain1/idp/auth";
+            UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
 
-            CallbackUrl callback = new CallbackUrl(req.getRequestURI());
-            authorization += "?" + callback.toQueryString();
-            resp.sendRedirect(authorization);
+            // CallbackUrl callback = new CallbackUrl(req.getRequestURI());
+            CallbackBuilder callback = new CallbackBuilder(req.getRequestURI());
+            // authorization += "?" + callback.toQueryString();
+            authorization.appendQueryString(callback.toQueryString());
+            resp.sendRedirect(authorization.build());
             return false;
         }
         return true;

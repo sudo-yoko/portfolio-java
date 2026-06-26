@@ -5,16 +5,18 @@ import java.nio.charset.StandardCharsets;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public final class CallbackUrl {
+// TODO: 後で削除
+
+public final class CallbackUrlBK {
     private static final String KEY = "callback";
     private final String value;
 
-    public CallbackUrl(HttpServletRequest req) {
+    public CallbackUrlBK(HttpServletRequest req) {
         String callback = req.getParameter(KEY); // NOTE: getParameterはデコード済みを返す
         this.value = callback;
     }
 
-    public CallbackUrl(String url) {
+    public CallbackUrlBK(String url) {
         this.value = url;
     }
 
@@ -29,7 +31,7 @@ public final class CallbackUrl {
         return this.value;
     }
 
-    public CallbackUrl appendQueryParam(String param) {
+    public CallbackUrlBK appendQueryParam(String param) {
         if (param == null || param.isBlank() || !this.hasValue()) {
             return this;
         }
@@ -40,7 +42,7 @@ public final class CallbackUrl {
         } else {
             newValue = this.value + "?" + param;
         }
-        return new CallbackUrl(newValue);
+        return new CallbackUrlBK(newValue);
     }
 
     public String toQueryString() {

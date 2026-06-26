@@ -3,7 +3,8 @@ package com.example.application.domain1;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.CallbackUrl;
+import com.example.application.CallbackBuilder;
+import com.example.application.UrlBuilder;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,14 +51,20 @@ public class DomainCookie {
             }
             if (sessionId == null) {
                 logger.severe(LOG_PREFIX + "cookie invalid.");
-                String authentication = req.getContextPath() + "/domain1/login/auth";
-
-                CallbackUrl callback = new CallbackUrl(req);
+                // String authentication = req.getContextPath() + "/domain1/login/auth";
+                // CallbackUrl callback = new CallbackUrl(req);
+                // if (!callback.hasValue()) {
+                // callback = new CallbackUrl(req.getRequestURI());
+                // }
+                // authentication += "?" + callback.toQueryString();
+                // resp.sendRedirect(authentication);
+                UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
+                CallbackBuilder callback = new CallbackBuilder(req);
                 if (!callback.hasValue()) {
-                    callback = new CallbackUrl(req.getRequestURI());
+                    callback = new CallbackBuilder(req.getRequestURI());
                 }
-                authentication += "?" + callback.toQueryString();
-                resp.sendRedirect(authentication);
+                authentication.appendQueryString(callback.toQueryString());
+                resp.sendRedirect(authentication.build());
                 return null;
             }
             return sessionId;
