@@ -32,11 +32,6 @@ public class LogoutServlet extends HttpServlet {
         // ドメインクッキーを破棄
         DomainCookie.SessionId.kill(req, resp);
 
-        // String logout = req.getContextPath() + "/domain1/idp/logout";
-        // CallbackUrl callback = new CallbackUrl(req.getContextPath() +
-        // "/domain1/login/auth");
-        // logout += "?" + callback.toQueryString();
-        // resp.sendRedirect(logout);
         UrlBuilder logout = new UrlBuilder(req.getContextPath() + "/domain1/idp/logout");
         CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain1/login/auth");
         logout.appendQueryString(callback.toQueryString());

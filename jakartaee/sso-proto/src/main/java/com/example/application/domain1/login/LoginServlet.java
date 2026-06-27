@@ -35,11 +35,6 @@ public class LoginServlet extends HttpServlet {
             out.println("<body>");
             out.println("<h2>ログイン</h2>");
             // フォームアクション
-            // String authentication = req.getContextPath() + "/domain1/login/auth";
-            // CallbackUrl callback = new CallbackUrl(req);
-            // if (callback.hasValue()) {
-            // authentication += "?" + callback.toQueryString();
-            // }
             UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
             CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
@@ -77,13 +72,6 @@ public class LoginServlet extends HttpServlet {
             // ログインクッキーを作成する
             DomainCookie.SessionId.create(req, resp);
             //
-            // CallbackUrl callback = new CallbackUrl(req);
-            // if (callback.hasValue()) {
-            // String redirect = req.getContextPath() + "/domain1/idp/auth";
-            // redirect += "?" + callback.toQueryString();
-            // resp.sendRedirect(redirect);
-            // return;
-            // }
             CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
                 UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");

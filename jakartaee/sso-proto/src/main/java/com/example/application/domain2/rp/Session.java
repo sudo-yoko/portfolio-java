@@ -47,12 +47,6 @@ public class Session {
             logger.severe(LOG_PREFIX + "session invalid.");
             String clientId = "appB";
 
-            // String authorization = req.getContextPath() + "/domain1/idp/auth";
-            // String redirect = authorization + "?clientId=" + clientId;
-            // CallbackUrl callback = new CallbackUrl(req.getContextPath() +
-            // "/domain2/rp/auth");
-            // redirect += "&" + callback.toQueryString();
-            // resp.sendRedirect(redirect);
             UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
             UrlBuilder redirect = new UrlBuilder(authorization.build());
             redirect.appendQueryParam("clientId", clientId);

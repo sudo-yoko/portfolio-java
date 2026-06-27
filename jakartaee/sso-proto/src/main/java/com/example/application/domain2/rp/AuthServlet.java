@@ -35,11 +35,6 @@ public class AuthServlet extends HttpServlet {
         // ユーザーセッションを作成する
         Session.create(req, token);
 
-        // CallbackUrl callback = new CallbackUrl(req);
-        // if (callback.hasValue()) {
-        // resp.sendRedirect(callback.getValue());
-        // return;
-        // }
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
             resp.sendRedirect(callback.build());

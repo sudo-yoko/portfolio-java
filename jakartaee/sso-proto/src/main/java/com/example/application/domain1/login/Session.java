@@ -46,10 +46,6 @@ public class Session {
         if (session == null || session.getAttribute(ID) == null) {
             logger.severe(LOG_PREFIX + "session invalid.");
 
-            // String authentication = req.getContextPath() + "/domain1/login/auth";
-            // CallbackUrl callback = new CallbackUrl(req.getRequestURI());
-            // authentication += "?" + callback.toQueryString();
-            // resp.sendRedirect(authentication);
             UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
             CallbackBuilder callback = new CallbackBuilder(req.getRequestURI());
             authentication.appendQueryString(callback.toQueryString());

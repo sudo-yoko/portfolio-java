@@ -45,12 +45,9 @@ public class ConsentServlet extends HttpServlet {
             out.println("<head><title>同意確認</title></head>");
             out.println("<body style='background-color: #FFFFE0;'>");
             out.println("<h2>同意確認</h2>");
-            // String consent = req.getContextPath() + "/domain1/idp/consent";
             UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
-            // CallbackUrl callback = new CallbackUrl(req);
             CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
-                // consent += "?" + callback.toQueryString();
                 consent.appendQueryString(callback.toQueryString());
             }
             out.println("<form action='" + consent.build() + "' method='POST'>");

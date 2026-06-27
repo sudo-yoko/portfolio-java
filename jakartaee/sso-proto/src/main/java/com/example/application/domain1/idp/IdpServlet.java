@@ -34,17 +34,14 @@ public class IdpServlet extends HttpServlet {
         // セッションが無ければ作成する
         Session.create(req);
 
-        // CallbackUrl callback = new CallbackUrl(req);
         CallbackBuilder callback = new CallbackBuilder(req);
 
         // 同意確認
         Boolean consent = Session.getConsent(req);
         // 同意確認されていない
         if (consent == null) {
-            // String redirect = req.getContextPath() + "/domain1/idp/consent";
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
             if (callback.hasValue()) {
-                // redirect += "?" + callback.toQueryString();
                 redirect.appendQueryString(callback.toQueryString());
             }
             resp.sendRedirect(redirect.build());
@@ -52,10 +49,8 @@ public class IdpServlet extends HttpServlet {
         }
         // 同意しない
         if (consent == false) {
-            // String redirect = req.getContextPath() + "/domain1/idp/cancel";
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/cancel");
             if (callback.hasValue()) {
-                // redirect += "?" + callback.toQueryString();
                 redirect.appendQueryString(callback.toQueryString());
             }
             resp.sendRedirect(redirect.build());
@@ -64,14 +59,10 @@ public class IdpServlet extends HttpServlet {
         // 同意する
         String token = "proto-token-456";
         if (callback.hasValue()) {
-            // TODO: 値オブジェクトではなく、ビルダーパターンでの実装も検討
-            // resp.sendRedirect(callback.appendQueryParam("token=" + token).getValue());
             callback.appendQueryParam("token", token);
             resp.sendRedirect(callback.build());
             return;
         } else {
-            // String redirect = req.getContextPath() + "/domain2/rp/auth";
-            // redirect += "?token=" + token;
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/auth");
             redirect.appendQueryParam("token", token);
             resp.sendRedirect(redirect.build());

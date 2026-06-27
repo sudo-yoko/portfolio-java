@@ -51,13 +51,6 @@ public class DomainCookie {
             }
             if (sessionId == null) {
                 logger.severe(LOG_PREFIX + "cookie invalid.");
-                // String authentication = req.getContextPath() + "/domain1/login/auth";
-                // CallbackUrl callback = new CallbackUrl(req);
-                // if (!callback.hasValue()) {
-                // callback = new CallbackUrl(req.getRequestURI());
-                // }
-                // authentication += "?" + callback.toQueryString();
-                // resp.sendRedirect(authentication);
                 UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
                 CallbackBuilder callback = new CallbackBuilder(req);
                 if (!callback.hasValue()) {

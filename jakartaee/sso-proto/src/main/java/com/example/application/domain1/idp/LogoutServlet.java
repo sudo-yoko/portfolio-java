@@ -28,12 +28,9 @@ public class LogoutServlet extends HttpServlet {
         // ユーザーセッションを破棄
         Session.invalidate(req);
 
-        // CallbackUrl callback = new CallbackUrl(req);
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
-            // String redirect = req.getContextPath() + "/domain2/rp/logout";
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/logout");
-            // redirect += "?" + callback.toQueryString();
             redirect.appendQueryString(callback.toQueryString());
             resp.sendRedirect(redirect.build());
             return;

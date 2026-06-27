@@ -27,11 +27,6 @@ public class LogoutServlet extends HttpServlet {
         // ユーザーセッションを破棄
         Session.invalidate(req);
 
-        // CallbackUrl callback = new CallbackUrl(req);
-        // if (callback.hasValue()) {
-        // resp.sendRedirect(callback.getValue());
-        // return;
-        // }
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
             resp.sendRedirect(callback.build());
