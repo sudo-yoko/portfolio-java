@@ -21,7 +21,7 @@ public class DomainCookie {
 
     public static class SessionId {
         public static void create(HttpServletRequest req, HttpServletResponse resp) {
-            Cookie cookie = new Cookie(SSO_SESSION_ID, "proto-token-123");
+            Cookie cookie = new Cookie(SSO_SESSION_ID, "proto-cookie-123");
             // 本番構成はログインアプリとIdpは同じドメインとし、ログインクッキーの有効範囲はそのドメインとする。
             // cookie.setDomain(".sso-proto.com");
             cookie.setPath(req.getContextPath() + "/domain1"); // ドメイン全体で有効

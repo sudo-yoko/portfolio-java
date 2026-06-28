@@ -1,0 +1,5 @@
+POST http://localhost:8080/sso-proto/api/domain1/idp/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic SWQ644OR44K544Ov44O844OJ
+
+code=code-123

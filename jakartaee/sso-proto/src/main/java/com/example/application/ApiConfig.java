@@ -1,9 +1,9 @@
-package com.example.application.domain1.idp.api;
+package com.example.application;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
-@ApplicationPath("/api/domain1/idp")
+@ApplicationPath("api")
 public class ApiConfig extends Application {
 
 }

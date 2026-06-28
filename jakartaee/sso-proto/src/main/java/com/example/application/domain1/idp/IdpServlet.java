@@ -57,7 +57,7 @@ public class IdpServlet extends HttpServlet {
             return;
         }
         // 同意する
-        String code = "proto-token-456";   // 認可コード
+        String code = "proto-code-123";   // 認可コード
         if (callback.hasValue()) {
             callback.appendQueryParam("code", code);
             resp.sendRedirect(callback.build());
