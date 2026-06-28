@@ -24,16 +24,17 @@ public class AuthServlet extends HttpServlet {
         logger.info(LOG_PREFIX
                 + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
-        // アクセストークンチェック
-        String token = req.getParameter("token");
-        if (token == null || token.isBlank()) {
-            logger.severe(LOG_PREFIX + "token invalid.");
+        // 認可コード
+        String code = req.getParameter("code");
+        if (code == null || code.isBlank()) {
+            // TODO: 認可コード無い場合は、IdP経由でログイン画面に戻すか自前のログイン画面を表示するか検討
+            logger.severe(LOG_PREFIX + "code invalid.");
             resp.sendRedirect(req.getContextPath() + "/domain2/rp/error");
             return;
         }
 
         // ユーザーセッションを作成する
-        Session.create(req, token);
+        Session.create(req, code);
 
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {

@@ -17,14 +17,14 @@ public class Session {
     private static final Logger logger = Logger.getLogger(Session.class.getName());
     private static final String LOG_PREFIX = ">>> [RP]: " + Session.class.getSimpleName() + ": ";
 
-    private static final String TOKEN = "token";
+    private static final String CODE = "code";
 
     /**
      * ユーザーセッションを作成する
      */
-    protected static void create(HttpServletRequest req, String token) {
+    protected static void create(HttpServletRequest req, String code) {
         HttpSession session = req.getSession(true);
-        session.setAttribute(TOKEN, token);
+        session.setAttribute(CODE, code);
     }
 
     /**
@@ -43,7 +43,7 @@ public class Session {
      */
     protected static String validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute(TOKEN) == null) {
+        if (session == null || session.getAttribute(CODE) == null) {
             logger.severe(LOG_PREFIX + "session invalid.");
             String clientId = "appB";
 
@@ -56,7 +56,7 @@ public class Session {
 
             return null;
         }
-        return (String) session.getAttribute(TOKEN);
+        return (String) session.getAttribute(CODE);
     }
 
 }

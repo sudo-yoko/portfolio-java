@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Idpアプリ 認証処理
+ * 認可エンドポイント
  */
 @WebServlet("/domain1/idp/auth")
 public class IdpServlet extends HttpServlet {
@@ -57,14 +57,14 @@ public class IdpServlet extends HttpServlet {
             return;
         }
         // 同意する
-        String token = "proto-token-456";
+        String code = "proto-token-456";   // 認可コード
         if (callback.hasValue()) {
-            callback.appendQueryParam("token", token);
+            callback.appendQueryParam("code", code);
             resp.sendRedirect(callback.build());
             return;
         } else {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/auth");
-            redirect.appendQueryParam("token", token);
+            redirect.appendQueryParam("code", code);
             resp.sendRedirect(redirect.build());
             return;
         }
