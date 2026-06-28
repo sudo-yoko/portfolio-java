@@ -7,16 +7,16 @@ import jakarta.servlet.http.HttpServletRequest;
 
 // TODO: 後で削除
 
-public final class CallbackUrlBK {
+public final class BKCallbackUrl {
     private static final String KEY = "callback";
     private final String value;
 
-    public CallbackUrlBK(HttpServletRequest req) {
+    public BKCallbackUrl(HttpServletRequest req) {
         String callback = req.getParameter(KEY); // NOTE: getParameterはデコード済みを返す
         this.value = callback;
     }
 
-    public CallbackUrlBK(String url) {
+    public BKCallbackUrl(String url) {
         this.value = url;
     }
 
@@ -31,7 +31,7 @@ public final class CallbackUrlBK {
         return this.value;
     }
 
-    public CallbackUrlBK appendQueryParam(String param) {
+    public BKCallbackUrl appendQueryParam(String param) {
         if (param == null || param.isBlank() || !this.hasValue()) {
             return this;
         }
@@ -42,7 +42,7 @@ public final class CallbackUrlBK {
         } else {
             newValue = this.value + "?" + param;
         }
-        return new CallbackUrlBK(newValue);
+        return new BKCallbackUrl(newValue);
     }
 
     public String toQueryString() {

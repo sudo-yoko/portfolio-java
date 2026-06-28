@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
             UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
             CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
-                authentication.appendQueryString(callback.toQueryString());
+                authentication.appendQueryString(callback.buildQueryString());
             }
             out.println("<form action='" + authentication.build() + "' method='POST'>");
             out.println("<input type='text' name='id' value='admin' placeholder='ID'><br><br>");
@@ -75,7 +75,7 @@ public class LoginServlet extends HttpServlet {
             CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
                 UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
-                redirect.appendQueryString(callback.toQueryString());
+                redirect.appendQueryString(callback.buildQueryString());
                 resp.sendRedirect(redirect.build());
                 return;
             }

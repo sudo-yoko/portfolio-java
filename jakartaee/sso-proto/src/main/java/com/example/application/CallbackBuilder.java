@@ -29,7 +29,7 @@ public class CallbackBuilder {
 
     public CallbackBuilder appendQueryParam(String name, String value) {
         if (!this.hasValue()) {
-            return this;
+            throw new RuntimeException("error");
         }
         this.builder.appendQueryParam(name, value);
         return this;
@@ -42,7 +42,7 @@ public class CallbackBuilder {
         return this.builder.build();
     }
 
-    public String toQueryString() {
+    public String buildQueryString() {
         if (!this.hasValue()) {
             throw new RuntimeException("error");
         }

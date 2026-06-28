@@ -4,7 +4,9 @@ import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class Callback {
+// TODO: 後で削除
+
+public class BKCallback {
     private static final String KEY_CALLBACK = "callback";
 
     public static class Factory {
@@ -37,7 +39,7 @@ public class Callback {
             return this.builder.build();
         }
 
-        public String toQueryString() {
+        public String buildQueryString() {
             return KEY_CALLBACK + "=" + this.build();
         }
     }

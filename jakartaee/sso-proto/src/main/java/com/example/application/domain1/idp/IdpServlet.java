@@ -42,7 +42,7 @@ public class IdpServlet extends HttpServlet {
         if (consent == null) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
             if (callback.hasValue()) {
-                redirect.appendQueryString(callback.toQueryString());
+                redirect.appendQueryString(callback.buildQueryString());
             }
             resp.sendRedirect(redirect.build());
             return;
@@ -51,7 +51,7 @@ public class IdpServlet extends HttpServlet {
         if (consent == false) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/cancel");
             if (callback.hasValue()) {
-                redirect.appendQueryString(callback.toQueryString());
+                redirect.appendQueryString(callback.buildQueryString());
             }
             resp.sendRedirect(redirect.build());
             return;

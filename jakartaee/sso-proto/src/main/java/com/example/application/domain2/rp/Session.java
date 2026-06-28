@@ -51,7 +51,7 @@ public class Session {
             UrlBuilder redirect = new UrlBuilder(authorization.build());
             redirect.appendQueryParam("clientId", clientId);
             CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain2/rp/auth");
-            redirect.appendQueryString(callback.toQueryString());
+            redirect.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(redirect.build());
 
             return null;

@@ -48,7 +48,7 @@ public class ConsentServlet extends HttpServlet {
             UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
             CallbackBuilder callback = new CallbackBuilder(req);
             if (callback.hasValue()) {
-                consent.appendQueryString(callback.toQueryString());
+                consent.appendQueryString(callback.buildQueryString());
             }
             out.println("<form action='" + consent.build() + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
@@ -79,7 +79,7 @@ public class ConsentServlet extends HttpServlet {
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
             // redirect += "?" + callback.toQueryString();
-            redirect.appendQueryString(callback.toQueryString());
+            redirect.appendQueryString(callback.buildQueryString());
         }
 
         resp.sendRedirect(redirect.build());

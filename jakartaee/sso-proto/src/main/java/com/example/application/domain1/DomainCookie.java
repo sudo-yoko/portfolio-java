@@ -56,7 +56,7 @@ public class DomainCookie {
                 if (!callback.hasValue()) {
                     callback = new CallbackBuilder(req.getRequestURI());
                 }
-                authentication.appendQueryString(callback.toQueryString());
+                authentication.appendQueryString(callback.buildQueryString());
                 resp.sendRedirect(authentication.build());
                 return null;
             }

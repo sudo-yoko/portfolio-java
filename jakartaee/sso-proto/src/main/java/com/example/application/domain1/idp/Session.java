@@ -59,7 +59,7 @@ public class Session {
             logger.severe(LOG_PREFIX + "session invalid.");
             UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
             CallbackBuilder callback = new CallbackBuilder(req.getRequestURI());
-            authorization.appendQueryString(callback.toQueryString());
+            authorization.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(authorization.build());
             return false;
         }

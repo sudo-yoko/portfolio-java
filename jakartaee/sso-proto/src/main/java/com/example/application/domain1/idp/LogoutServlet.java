@@ -31,7 +31,7 @@ public class LogoutServlet extends HttpServlet {
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/logout");
-            redirect.appendQueryString(callback.toQueryString());
+            redirect.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(redirect.build());
             return;
         }
