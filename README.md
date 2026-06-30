@@ -11,6 +11,38 @@ Embedded GlassFish Server を使った簡易サーバーでのアプリケーシ
 
 シングルサインオンの実装例
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor ユーザー
+    box domain1
+        participant アプリA
+        participant IdP
+    end
+    box domain2
+        participant アプリB
+    end
+    ユーザー->>アプリA: ログイン
+    Note over アプリA: ログイン認証
+    アプリA->>アプリB: シングルサインオン
+    alt アプリB未ログインの場合
+        アプリB-->>IdP: リダイレクト
+        Note over IdP: 認可エンドポイント
+        alt アプリA未ログインの場合
+            IdP-->>ユーザー: リダイレクト
+            ユーザー->>アプリA: ログイン
+            アプリA->>IdP: ログイン完了
+        end
+        IdP-->>ユーザー: 同意確認
+        ユーザー->>IdP: 同意する
+        IdP-->>ユーザー: 認可コード
+        ユーザー->>アプリB: リダイレクト
+        アプリB-->>IdP: アクセストークンを要求
+        Note over IdP: トークンエンドポイント
+        IdP->>アプリB: トークンを返す
+    end
+```
+
 ## JEP330
 
 JEP330 (Launch Single-File Source-Code Programs)を使用した便利なツール実装例。
