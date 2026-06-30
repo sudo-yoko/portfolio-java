@@ -25,13 +25,18 @@ sequenceDiagram
     ユーザー->>アプリA: ログイン
     Note over アプリA: ログイン認証
     アプリA->>アプリB: シングルサインオン
+    Note over アプリB: ログイン認証
+    Note over アプリB: アプリB ログインチェック
     alt アプリB未ログインの場合
         アプリB-->>IdP: リダイレクト
         Note over IdP: 認可エンドポイント
+        Note over IdP: アプリA ログインチェック
         alt アプリA未ログインの場合
             IdP-->>ユーザー: リダイレクト
             ユーザー->>アプリA: ログイン
-            アプリA->>IdP: ログイン完了
+            Note over アプリA: ログイン認証
+            Note over アプリA: ログイン完了
+            アプリA->>IdP: リダイレクト
         end
         IdP-->>ユーザー: 同意確認
         ユーザー->>IdP: 同意する
