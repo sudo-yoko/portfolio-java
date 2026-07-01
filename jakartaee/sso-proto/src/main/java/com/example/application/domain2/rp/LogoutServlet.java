@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain2/rp/logout")
 public class LogoutServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(LogoutServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [RP]: " + LogoutServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP2]: " + LogoutServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

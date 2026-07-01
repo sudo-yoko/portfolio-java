@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain2/rp/auth")
 public class AuthServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(AuthServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [RP]: " + AuthServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP2]: " + AuthServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

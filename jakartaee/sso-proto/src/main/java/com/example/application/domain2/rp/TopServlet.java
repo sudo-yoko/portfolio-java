@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet("/domain2/rp/top")
 public class TopServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(TopServlet.class.getName());
-    private static final String LOG_PREFIX = ">>> [RP]: " + TopServlet.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP2]: " + TopServlet.class.getSimpleName() + ": ";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
