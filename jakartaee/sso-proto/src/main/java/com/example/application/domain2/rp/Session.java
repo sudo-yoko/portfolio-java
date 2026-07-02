@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
  */
 public class Session {
     private static final Logger logger = Logger.getLogger(Session.class.getName());
-    private static final String LOG_PREFIX = ">>> [RP]: " + Session.class.getSimpleName() + ": ";
+    private static final String LOG_PREFIX = ">>> [RP2]: " + Session.class.getSimpleName() + ": ";
 
     private static final String CODE = "code";
 
@@ -45,11 +45,10 @@ public class Session {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute(CODE) == null) {
             logger.severe(LOG_PREFIX + "session invalid.");
-            String clientId = "appB";
 
             UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
             UrlBuilder redirect = new UrlBuilder(authorization.build());
-            redirect.appendQueryParam("clientId", clientId);
+            redirect.appendQueryParam("clientId", ClientId.VALUE);
             CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain2/rp/auth");
             redirect.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(redirect.build());

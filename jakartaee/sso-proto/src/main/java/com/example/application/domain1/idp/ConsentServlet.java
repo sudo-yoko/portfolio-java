@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
+import com.example.application.ClientId;
 import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
@@ -33,9 +34,19 @@ public class ConsentServlet extends HttpServlet {
             return;
         }
         // セッションの確認
-        boolean valid = Session.validate(req, resp);
+        boolean valid = IdpSessionManager.validate(req, resp);
         if (!valid) {
             return;
+        }
+
+        // クライアントID
+        ClientId clientId = new ClientId(req);
+        // 同意確認URL
+        UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
+        CallbackBuilder callback = new CallbackBuilder(req);
+        if (callback.hasValue()) {
+            // 同意後に遷移するURL
+            consent.appendQueryString(callback.buildQueryString());
         }
 
         resp.setContentType("text/html;charset=UTF-8");
@@ -45,11 +56,7 @@ public class ConsentServlet extends HttpServlet {
             out.println("<head><title>同意確認</title></head>");
             out.println("<body style='background-color: #FFFFE0;'>");
             out.println("<h2>同意確認</h2>");
-            UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
-            CallbackBuilder callback = new CallbackBuilder(req);
-            if (callback.hasValue()) {
-                consent.appendQueryString(callback.buildQueryString());
-            }
+            out.println("<p>" + clientId.getValue() + "にログインします。</p>");
             out.println("<form action='" + consent.build() + "' method='POST'>");
             out.println("<button type='submit' name='consent' value='approve'>同意する</button>");
             out.println("<button type='submit' name='consent' value='deny'>同意しない</button>");
@@ -66,9 +73,9 @@ public class ConsentServlet extends HttpServlet {
 
         String consent = req.getParameter("consent");
         if ("approve".equals(consent)) {
-            Session.setConsent(req, true);
+            IdpSessionManager.setConsent(req, true);
         } else if ("deny".equals(consent)) {
-            Session.setConsent(req, false);
+            IdpSessionManager.setConsent(req, false);
         } else {
 
         }

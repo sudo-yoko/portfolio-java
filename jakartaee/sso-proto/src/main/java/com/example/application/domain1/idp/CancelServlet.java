@@ -31,7 +31,7 @@ public class CancelServlet extends HttpServlet {
             return;
         }
         // セッションの確認
-        boolean valid = Session.validate(req, resp);
+        boolean valid = IdpSessionManager.validate(req, resp);
         if (!valid) {
             return;
         }
