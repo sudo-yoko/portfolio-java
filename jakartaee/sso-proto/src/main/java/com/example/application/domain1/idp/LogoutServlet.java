@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
-import com.example.application.UrlBuilder;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,9 +29,11 @@ public class LogoutServlet extends HttpServlet {
 
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
-            UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain2/rp/logout");
-            redirect.appendQueryString(callback.buildQueryString());
-            resp.sendRedirect(redirect.build());
+            // UrlBuilder redirect = new UrlBuilder(req.getContextPath() +
+            // "/domain2/rp/logout");
+            // redirect.appendQueryString(callback.buildQueryString());
+            // resp.sendRedirect(redirect.build());
+            resp.sendRedirect(callback.build());
             return;
         }
     }

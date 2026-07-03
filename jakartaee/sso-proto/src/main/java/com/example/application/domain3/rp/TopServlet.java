@@ -37,6 +37,8 @@ public class TopServlet extends HttpServlet {
             out.println("<body style='background-color: #FFE4E1;'>");
             out.println("<h2>お疲れさまです！</h2>");
             out.println("<p>シングルサインオンの練習は順調です。</p>");
+            String logout = req.getContextPath() + "/domain2/rp/logout";
+            out.println("<p><a href='" + logout + "'>ログアウトする</p>");
             out.println("</body>");
             out.println("</html>");
         }

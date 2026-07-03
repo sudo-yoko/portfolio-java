@@ -1,9 +1,8 @@
 package com.example.application.domain3.rp;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Logger;
-
-import com.example.application.CallbackBuilder;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,10 +23,22 @@ public class LogoutServlet extends HttpServlet {
         // ユーザーセッションを破棄
         Session.invalidate(req);
 
-        CallbackBuilder callback = new CallbackBuilder(req);
-        if (callback.hasValue()) {
-            resp.sendRedirect(callback.build());
-            return;
+        // CallbackBuilder callback = new CallbackBuilder(req);
+        // if (callback.hasValue()) {
+        // resp.sendRedirect(callback.build());
+        // return;
+        // }
+
+        resp.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = resp.getWriter()) {
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head><title>トップページ</title></head>");
+            out.println("<body style='background-color: #FFE4E1;'>");
+            out.println("<h2>ログアウトしました。</h2>");
+            out.println("<p>シングルサインオンの練習は順調です。</p>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 

@@ -39,7 +39,7 @@ class IdpSessionManager {
     }
 
     static IdpSession get(HttpServletRequest req) {
-        return SessionManager.<IdpSession>get(req, IDP_SESSION, IdpSession.class);
+        return SessionManager.get(req, IDP_SESSION, IdpSession.class);
     }
 
     static void set(HttpServletRequest req, IdpSession idpSession) {

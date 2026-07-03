@@ -13,11 +13,11 @@ public class SessionManager {
 
     }
 
-    public static <T> void create(HttpServletRequest req, String key, T initial) {
+    public static <T> void create(HttpServletRequest req, String key, T value) {
         HttpSession httpSession = req.getSession(true);
         Object session = httpSession.getAttribute(key);
         if (session == null) {
-            httpSession.setAttribute(key, initial);
+            httpSession.setAttribute(key, value);
             logger.info(LOG_PREFIX + "session created.");
         }
     }
@@ -33,8 +33,10 @@ public class SessionManager {
     public static boolean exists(HttpServletRequest req, String key) {
         HttpSession httpSession = req.getSession(false);
         if (httpSession != null && httpSession.getAttribute(key) != null) {
+            logger.info(LOG_PREFIX + "session exists.");
             return true;
         }
+        logger.info(LOG_PREFIX + "session does not exist.");
         return false;
     }
 

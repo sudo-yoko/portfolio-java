@@ -45,9 +45,12 @@ public class TopServlet extends HttpServlet {
             out.println("<h2>こんにちは、" + id + "さん！</h2>");
             out.println("<p>シングルサインオンの練習を始めましょう。</p>");
             // String authorization = req.getContextPath() + "/domain1/idp/auth";
-            String authorization = req.getContextPath() + "/domain2/rp/top";
+            String rp1Authorization = req.getContextPath() + "/domain2/rp/top";
             out.println(
-                    "<p><a href='" + authorization + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
+                    "<p><a href='" + rp1Authorization + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
+            String rp2Authorization = req.getContextPath() + "/domain3/rp/top";
+            out.println(
+                    "<p><a href='" + rp2Authorization + "' target='_blank' rel='noopener noreferrer'>別のアプリにログインする</p>");
             // ログアウト
             String logout = req.getContextPath() + "/domain1/login/logout";
             out.println("<p><a href='" + logout + "'>ログアウトする</p>");
