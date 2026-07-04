@@ -63,12 +63,9 @@ public class LoginServlet extends HttpServlet {
         String id = req.getParameter("id");
         String password = req.getParameter("password");
 
-        String clientId = req.getParameter("client_id");
-        String redirectUri = req.getParameter("redirect_id");
-
         if ("admin".equals(id) && "123".equals(password)) {
             // ログイン成功。セッションを作成する
-            Session.create(req, id);
+            LoginSessionManager.create(req, id);
             // ログインクッキーを作成する
             DomainCookie.SessionId.create(req, resp);
             //

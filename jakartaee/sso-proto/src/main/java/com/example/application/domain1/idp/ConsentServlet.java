@@ -43,6 +43,9 @@ public class ConsentServlet extends HttpServlet {
         ClientId clientId = new ClientId(req);
         // 同意確認URL
         UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
+        if (clientId.hasValue()) {
+            consent.appendQueryString(clientId.toQueryString());
+        }
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
             // 同意後に遷移するURL
@@ -71,16 +74,20 @@ public class ConsentServlet extends HttpServlet {
         logger.info(LOG_PREFIX
                 + String.format("doPost start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
+        ClientId clientId = new ClientId(req).require();
+
         String consent = req.getParameter("consent");
         if ("approve".equals(consent)) {
-            IdpSessionManager.setConsent(req, true);
+            IdpSessionManager.setConsent(req, clientId.getValue(), true);
         } else if ("deny".equals(consent)) {
-            IdpSessionManager.setConsent(req, false);
+            IdpSessionManager.setConsent(req, clientId.getValue(), false);
         } else {
 
         }
         // String redirect = req.getContextPath() + "/domain1/idp/auth";
         UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
+
+        redirect.appendQueryString(clientId.toQueryString());
 
         // CallbackUrl callback = new CallbackUrl(req);
         CallbackBuilder callback = new CallbackBuilder(req);

@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpSession;
 /**
  * ログインアプリ ユーザーセッション
  */
-public class Session {
-    private static final Logger logger = Logger.getLogger(Session.class.getName());
-    private static final String LOG_PREFIX = ">>> [LOGIN]: " + Session.class.getSimpleName() + ": ";
+public class SessionBK {
+    private static final Logger logger = Logger.getLogger(SessionBK.class.getName());
+    private static final String LOG_PREFIX = ">>> [LOGIN]: " + SessionBK.class.getSimpleName() + ": ";
 
     private static final String ID = "id";
 

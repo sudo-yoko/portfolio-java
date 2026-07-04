@@ -31,10 +31,11 @@ public class TopServlet extends HttpServlet {
             return;
         }
         // ユーザーセッションの確認
-        String id = Session.validate(req, resp);
-        if (id == null) {
+        boolean valid = LoginSessionManager.validate(req, resp);
+        if (!valid) {
             return;
         }
+        String id = LoginSessionManager.getId(req);
 
         resp.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = resp.getWriter()) {

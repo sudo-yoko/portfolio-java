@@ -39,7 +39,7 @@ public class IdpServlet extends HttpServlet {
         ClientId clientId = new ClientId(req);
 
         // 同意確認
-        Boolean consent = IdpSessionManager.getConsent(req);
+        Boolean consent = IdpSessionManager.getConsent(req, clientId.getValue());
         // 同意確認されていない
         if (consent == null) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
@@ -53,7 +53,9 @@ public class IdpServlet extends HttpServlet {
         // 同意しない
         if (consent == false) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/cancel");
-            redirect.appendQueryString(clientId.toQueryString());
+            if (clientId.hasValue()) {
+                redirect.appendQueryString(clientId.toQueryString());
+            }
             if (callback.hasValue()) {
                 redirect.appendQueryString(callback.buildQueryString());
             }

@@ -2,6 +2,9 @@ package com.example.application.domain1.idp;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
@@ -12,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 // NOTE: パッケージプライベートクラス
+// NOTE: セッション入出力DTOは、可変にしないで、不変＋上書きで作ること
 class IdpSessionManager {
     private static final Logger logger = Logger.getLogger(IdpSessionManager.class.getName());
     private static final String LOG_PREFIX = ">>> [IDP]: " + IdpSessionManager.class.getSimpleName() + ": ";
@@ -46,12 +50,12 @@ class IdpSessionManager {
         SessionManager.set(req, IDP_SESSION, idpSession);
     }
 
-    static Boolean getConsent(HttpServletRequest req) {
-        return get(req).getConsent();
+    static Boolean getConsent(HttpServletRequest req, String clientId) {
+        return get(req).getConsent(clientId);
     }
 
-    static void setConsent(HttpServletRequest req, Boolean consent) {
-        IdpSession updated = get(req).applyConsent(consent);
+    static void setConsent(HttpServletRequest req, String clientId, Boolean consent) {
+        IdpSession updated = get(req).applyConsent(clientId, consent);
         set(req, updated);
     }
 
@@ -67,32 +71,34 @@ class IdpSessionManager {
     static final class IdpSession implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        private final Boolean consent;
+        private final Map<String, Boolean> consents;
         private final String prop2;
 
         IdpSession() {
-            this(null, null);
+            this(Collections.emptyMap(), null);
         }
 
-        IdpSession(Boolean consent, String prop2) {
-            this.consent = consent;
+        IdpSession(Map<String, Boolean> consents, String prop2) {
+            this.consents = consents;
             this.prop2 = prop2;
         }
 
-        Boolean getConsent() {
-            return this.consent;
+        Boolean getConsent(String clientId) {
+            return this.consents.get(clientId);
         }
 
         String getProp2() {
             return this.prop2;
         }
 
-        IdpSession applyConsent(Boolean consent) {
-            return new IdpSession(consent, this.prop2);
+        IdpSession applyConsent(String clientId, Boolean consent) {
+            Map<String, Boolean> newConsents = new HashMap<>(this.consents);
+            newConsents.put(clientId, consent);
+            return new IdpSession(newConsents, this.prop2);
         }
 
         IdpSession applyProp2(String prop2) {
-            return new IdpSession(this.consent, prop2);
+            return new IdpSession(this.consents, prop2);
         }
     }
 }
