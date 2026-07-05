@@ -30,6 +30,15 @@ class IdpSessionManager {
         SessionManager.remove(req, IDP_SESSION);
     }
 
+    static void remove(HttpServletRequest req, String id) {
+        if (SessionManager.exists(req, IDP_SESSION)) {
+            IdpSession idpSession = SessionManager.get(req, IDP_SESSION, IdpSession.class);
+            IdpSession newIdpSession = idpSession.revokeConsent(id);
+            SessionManager.set(req, IDP_SESSION, newIdpSession);
+            logger.info(LOG_PREFIX + String.format("session removed. key=%s, id=%s", IDP_SESSION, id));
+        }
+    }
+
     static boolean validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (SessionManager.exists(req, IDP_SESSION)) {
             return true;
@@ -94,6 +103,12 @@ class IdpSessionManager {
         IdpSession applyConsent(String clientId, Boolean consent) {
             Map<String, Boolean> newConsents = new HashMap<>(this.consents);
             newConsents.put(clientId, consent);
+            return new IdpSession(newConsents, this.prop2);
+        }
+
+        IdpSession revokeConsent(String clientId) {
+            Map<String, Boolean> newConsents = new HashMap<>(this.consents);
+            newConsents.remove(clientId);
             return new IdpSession(newConsents, this.prop2);
         }
 

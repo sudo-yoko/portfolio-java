@@ -3,7 +3,7 @@ package com.example.application.domain1.idp;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.example.application.ClientId;
+import com.example.application.ClientIdBuilder;
 import com.example.application.domain1.DomainCookie;
 
 import jakarta.servlet.ServletException;
@@ -36,7 +36,7 @@ public class RetryServlet extends HttpServlet {
             return;
         }
         // 同意確認結果をクリアする
-        ClientId clientId = new ClientId(req);
+        ClientIdBuilder clientId = new ClientIdBuilder(req);
         if (!clientId.hasValue()) {
             throw new IllegalStateException("clientId invalid.");
         }

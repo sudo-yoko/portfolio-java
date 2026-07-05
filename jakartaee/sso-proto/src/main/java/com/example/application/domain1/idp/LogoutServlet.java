@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
+import com.example.application.ClientIdBuilder;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,7 +26,12 @@ public class LogoutServlet extends HttpServlet {
                 + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         // ユーザーセッションを破棄
-        IdpSessionManager.remove(req);
+        ClientIdBuilder id = new ClientIdBuilder(req);
+        if (id.hasValue()) {
+            IdpSessionManager.remove(req, id.getValue());
+        } else {
+            IdpSessionManager.remove(req);
+        }
 
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {

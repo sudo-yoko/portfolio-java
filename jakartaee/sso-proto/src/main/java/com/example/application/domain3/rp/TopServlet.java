@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
+import com.example.application.CallbackBuilder;
+import com.example.application.ClientIdBuilder;
+import com.example.application.UrlBuilder;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -37,8 +41,12 @@ public class TopServlet extends HttpServlet {
             out.println("<body style='background-color: #FFE4E1;'>");
             out.println("<h2>お疲れさまです！</h2>");
             out.println("<p>シングルサインオンの練習は順調です。</p>");
-            String logout = req.getContextPath() + "/domain3/rp/logout";
-            out.println("<p><a href='" + logout + "'>ログアウトする</p>");
+            UrlBuilder idp = new UrlBuilder(req.getContextPath() + "/domain1/idp/logout");
+            ClientIdBuilder clientId = new ClientIdBuilder(ClientId.VALUE);
+            idp.appendQueryString(clientId.buildQueryString());
+            CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain3/rp/logout");
+            idp.appendQueryString(callback.buildQueryString());
+            out.println("<p><a href='" + idp.build() + "'>ログアウトする</p>");
             out.println("</body>");
             out.println("</html>");
         }

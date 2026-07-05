@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
-import com.example.application.ClientId;
+import com.example.application.ClientIdBuilder;
 import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
@@ -36,14 +36,14 @@ public class IdpServlet extends HttpServlet {
         IdpSessionManager.create(req);
 
         CallbackBuilder callback = new CallbackBuilder(req);
-        ClientId clientId = new ClientId(req);
+        ClientIdBuilder clientId = new ClientIdBuilder(req);
 
         // 同意確認
         Boolean consent = IdpSessionManager.getConsent(req, clientId.getValue());
         // 同意確認されていない
         if (consent == null) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
-            redirect.appendQueryString(clientId.toQueryString());
+            redirect.appendQueryString(clientId.buildQueryString());
             if (callback.hasValue()) {
                 redirect.appendQueryString(callback.buildQueryString());
             }
@@ -54,7 +54,7 @@ public class IdpServlet extends HttpServlet {
         if (consent == false) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/cancel");
             if (clientId.hasValue()) {
-                redirect.appendQueryString(clientId.toQueryString());
+                redirect.appendQueryString(clientId.buildQueryString());
             }
             if (callback.hasValue()) {
                 redirect.appendQueryString(callback.buildQueryString());

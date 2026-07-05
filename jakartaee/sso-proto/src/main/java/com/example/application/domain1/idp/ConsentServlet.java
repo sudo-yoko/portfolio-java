@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
-import com.example.application.ClientId;
+import com.example.application.ClientIdBuilder;
 import com.example.application.UrlBuilder;
 import com.example.application.domain1.DomainCookie;
 
@@ -40,11 +40,11 @@ public class ConsentServlet extends HttpServlet {
         }
 
         // クライアントID
-        ClientId clientId = new ClientId(req);
+        ClientIdBuilder clientId = new ClientIdBuilder(req);
         // 同意確認URL
         UrlBuilder consent = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
         if (clientId.hasValue()) {
-            consent.appendQueryString(clientId.toQueryString());
+            consent.appendQueryString(clientId.buildQueryString());
         }
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
@@ -74,7 +74,7 @@ public class ConsentServlet extends HttpServlet {
         logger.info(LOG_PREFIX
                 + String.format("doPost start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
-        ClientId clientId = new ClientId(req).require();
+        ClientIdBuilder clientId = new ClientIdBuilder(req).require();
 
         String consent = req.getParameter("consent");
         if ("approve".equals(consent)) {
@@ -87,7 +87,7 @@ public class ConsentServlet extends HttpServlet {
         // String redirect = req.getContextPath() + "/domain1/idp/auth";
         UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
 
-        redirect.appendQueryString(clientId.toQueryString());
+        redirect.appendQueryString(clientId.buildQueryString());
 
         // CallbackUrl callback = new CallbackUrl(req);
         CallbackBuilder callback = new CallbackBuilder(req);

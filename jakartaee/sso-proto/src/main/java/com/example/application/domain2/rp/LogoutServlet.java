@@ -26,12 +26,6 @@ public class LogoutServlet extends HttpServlet {
         // ユーザーセッションを破棄
         Rp2SessionManager.remove(req);
 
-        // CallbackBuilder callback = new CallbackBuilder(req);
-        // if (callback.hasValue()) {
-        // resp.sendRedirect(callback.build());
-        // return;
-        // }
-
         resp.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = resp.getWriter()) {
             out.println("<!DOCTYPE html>");
