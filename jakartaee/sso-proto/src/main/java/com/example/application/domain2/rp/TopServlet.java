@@ -24,8 +24,8 @@ public class TopServlet extends HttpServlet {
                 + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         // ユーザーセッションの確認
-        String session = Session.validate(req, resp);
-        if (session == null) {
+        boolean valid = Rp2SessionManager.validate(req, resp);
+        if (!valid) {
             return;
         }
 

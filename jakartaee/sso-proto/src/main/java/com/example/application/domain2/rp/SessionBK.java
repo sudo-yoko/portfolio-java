@@ -1,4 +1,4 @@
-package com.example.application.domain3.rp;
+package com.example.application.domain2.rp;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -10,9 +10,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-public class Session {
-    private static final Logger logger = Logger.getLogger(Session.class.getName());
-    private static final String LOG_PREFIX = ">>> [RP3]: " + Session.class.getSimpleName() + ": ";
+/**
+ * RPアプリ ユーザーセッション
+ */
+public class SessionBK {
+    private static final Logger logger = Logger.getLogger(SessionBK .class.getName());
+    private static final String LOG_PREFIX = ">>> [RP2]: " + SessionBK .class.getSimpleName() + ": ";
 
     private static final String CODE = "code";
 
@@ -46,7 +49,7 @@ public class Session {
             UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
             UrlBuilder redirect = new UrlBuilder(authorization.build());
             redirect.appendQueryParam("clientId", ClientId.VALUE);
-            CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain3/rp/auth");
+            CallbackBuilder callback = new CallbackBuilder(req.getContextPath() + "/domain2/rp/auth");
             redirect.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(redirect.build());
 

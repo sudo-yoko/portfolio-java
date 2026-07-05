@@ -26,10 +26,7 @@ class LoginSessionManager {
     }
 
     static boolean validate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if (exists(req)) {
-            return true;
-        }
-        if (get(req).getId() != null) {
+        if (exists(req) && get(req).getId() != null) {
             return true;
         }
         logger.severe(LOG_PREFIX + "session invalid.");

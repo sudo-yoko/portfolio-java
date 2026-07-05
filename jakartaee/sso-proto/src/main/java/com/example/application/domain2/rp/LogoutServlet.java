@@ -24,7 +24,7 @@ public class LogoutServlet extends HttpServlet {
                 + String.format("doGet start. uri->%s, query->%s", req.getRequestURI(), req.getQueryString()));
 
         // ユーザーセッションを破棄
-        Session.invalidate(req);
+        Rp2SessionManager.remove(req);
 
         // CallbackBuilder callback = new CallbackBuilder(req);
         // if (callback.hasValue()) {

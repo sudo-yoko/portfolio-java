@@ -18,7 +18,7 @@ public class SessionManager {
         Object session = httpSession.getAttribute(key);
         if (session == null) {
             httpSession.setAttribute(key, value);
-            logger.info(LOG_PREFIX + "session created.");
+            logger.info(LOG_PREFIX + "session created. key=" + key);
         }
     }
 
@@ -26,31 +26,31 @@ public class SessionManager {
         HttpSession session = req.getSession(false);
         if (session != null) {
             session.removeAttribute(key);
-            logger.info(LOG_PREFIX + "session removed.");
+            logger.info(LOG_PREFIX + "session removed. key=" + key);
         }
     }
 
     public static boolean exists(HttpServletRequest req, String key) {
         HttpSession httpSession = req.getSession(false);
         if (httpSession != null && httpSession.getAttribute(key) != null) {
-            logger.info(LOG_PREFIX + "session exists.");
+            logger.info(LOG_PREFIX + "session exists. key=" + key);
             return true;
         }
-        logger.info(LOG_PREFIX + "session does not exist.");
+        logger.info(LOG_PREFIX + "session does not exist. key=" + key);
         return false;
     }
 
     public static <T> T get(HttpServletRequest req, String key, Class<T> type) {
         HttpSession httpSession = req.getSession(false);
         if (httpSession == null) {
-            throw new IllegalStateException("session does not exist.");
+            throw new IllegalStateException("session does not exist. key=" + key);
         }
         Object value = httpSession.getAttribute(key);
         if (value == null) {
-            throw new IllegalStateException("session does not exist.");
+            throw new IllegalStateException("session does not exist. key=" + key);
         }
         if (!type.isInstance(value)) {
-            throw new IllegalStateException("session type mismatch key=" + key);
+            throw new IllegalStateException("session type mismatch. key=" + key);
         }
         return type.cast(value);
     }
@@ -58,7 +58,7 @@ public class SessionManager {
     public static <T> void set(HttpServletRequest req, String key, T value) {
         HttpSession httpSession = req.getSession(false);
         if (httpSession == null) {
-            throw new IllegalStateException("session does not exist.");
+            throw new IllegalStateException("session does not exist. key=" + key);
         }
         httpSession.setAttribute(key, value);
     }

@@ -31,7 +31,7 @@ public class AuthServlet extends HttpServlet {
         }
 
         // ユーザーセッションを作成する
-        Session.create(req, code);
+        Rp3SessionManager.create(req, code);
 
         CallbackBuilder callback = new CallbackBuilder(req);
         if (callback.hasValue()) {
