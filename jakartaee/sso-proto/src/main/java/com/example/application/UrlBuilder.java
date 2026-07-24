@@ -7,14 +7,14 @@ public class UrlBuilder {
 
     public UrlBuilder(String url) {
         if (url == null || url.isBlank()) {
-            throw new RuntimeException("error");
+            throw new IllegalStateException("url does not exist.");
         }
         this.builder = UriBuilder.fromUri(url.trim());
     }
 
     public UrlBuilder appendQueryParam(String name, String value) {
         if (name == null || value == null) {
-            throw new RuntimeException("error");
+            throw new IllegalArgumentException("invalid argument.");
         }
         this.builder.queryParam(name, value);
         return this;
@@ -22,7 +22,7 @@ public class UrlBuilder {
 
     public UrlBuilder appendQueryString(String queryString) {
         if (queryString == null || !queryString.contains("=")) {
-            throw new RuntimeException("error");
+            throw new IllegalArgumentException("invalid argument.");
         }
         String parts[] = queryString.split("=", 2);
         this.builder.queryParam(parts[0], parts[1]);

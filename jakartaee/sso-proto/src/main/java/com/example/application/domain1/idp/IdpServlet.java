@@ -35,8 +35,8 @@ public class IdpServlet extends HttpServlet {
         // セッションが無ければ作成する
         IdpSessionManager.create(req);
 
-        CallbackBuilder callback = new CallbackBuilder(req);
-        ClientIdBuilder clientId = new ClientIdBuilder(req);
+        CallbackBuilder callback = new CallbackBuilder(req).require();
+        ClientIdBuilder clientId = new ClientIdBuilder(req).require();
 
         // 同意確認
         Boolean consent = IdpSessionManager.getConsent(req, clientId.getValue());
@@ -44,39 +44,34 @@ public class IdpServlet extends HttpServlet {
         if (consent == null) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/consent");
             redirect.appendQueryString(clientId.buildQueryString());
-            if (callback.hasValue()) {
-                redirect.appendQueryString(callback.buildQueryString());
-            }
+            redirect.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(redirect.build());
             return;
         }
         // 同意しない
         if (consent == false) {
             UrlBuilder redirect = new UrlBuilder(req.getContextPath() + "/domain1/idp/cancel");
-            if (clientId.hasValue()) {
-                redirect.appendQueryString(clientId.buildQueryString());
-            }
-            if (callback.hasValue()) {
-                redirect.appendQueryString(callback.buildQueryString());
-            }
+            redirect.appendQueryString(clientId.buildQueryString());
+            redirect.appendQueryString(callback.buildQueryString());
             resp.sendRedirect(redirect.build());
             return;
         }
         // 同意する
         String code = "proto-code-123"; // 認可コード
-        if (callback.hasValue()) {
-            callback.appendQueryParam("code", code);
-            resp.sendRedirect(callback.build());
-            return;
-        } else {
-            // UrlBuilder redirect = new UrlBuilder(req.getContextPath() +
-            // "/domain2/rp/auth");
-            // redirect.appendQueryParam("code", code);
-            // resp.sendRedirect(redirect.build());
-            // return;
-            UrlBuilder error = new UrlBuilder(req.getContextPath() + "/domain2/idp/error");
-            resp.sendRedirect(error.build());
-            return;
-        }
+        // if (callback.hasValue()) {
+        callback.appendQueryParam("code", code);
+        resp.sendRedirect(callback.build());
+        return;
+        // } else {
+        // UrlBuilder redirect = new UrlBuilder(req.getContextPath() +
+        // "/domain2/rp/auth");
+        // redirect.appendQueryParam("code", code);
+        // resp.sendRedirect(redirect.build());
+        // return;
+        // UrlBuilder error = new UrlBuilder(req.getContextPath() +
+        // "/domain2/idp/error");
+        // resp.sendRedirect(error.build());
+        // return;
+        // }
     }
 }

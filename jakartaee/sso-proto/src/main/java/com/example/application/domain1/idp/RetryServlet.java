@@ -36,10 +36,7 @@ public class RetryServlet extends HttpServlet {
             return;
         }
         // 同意確認結果をクリアする
-        ClientIdBuilder clientId = new ClientIdBuilder(req);
-        if (!clientId.hasValue()) {
-            throw new IllegalStateException("clientId invalid.");
-        }
+        ClientIdBuilder clientId = new ClientIdBuilder(req).require();
         IdpSessionManager.setConsent(req, clientId.getValue(), null);
 
         resp.sendRedirect(req.getContextPath() + "/domain1/idp/auth");

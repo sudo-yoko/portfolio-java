@@ -9,11 +9,11 @@ public class ClientIdBuilder {
 
     public ClientIdBuilder(HttpServletRequest req) {
         String clientId = req.getParameter(CLIENT_ID);
-        this.clientId = clientId;
+        this.clientId = clientId == null ? null : clientId.trim();
     }
 
     public ClientIdBuilder(String clientId) {
-        this.clientId = clientId;
+        this.clientId = clientId == null ? null : clientId.trim();
     }
 
     public String getValue() {
@@ -24,9 +24,6 @@ public class ClientIdBuilder {
         return clientId != null && !clientId.isBlank();
     }
 
-    /**
-     * 必須チェック
-     */
     public ClientIdBuilder require() {
         if (!hasValue()) {
             throw new IllegalStateException("clientId does not exist.");
@@ -35,6 +32,9 @@ public class ClientIdBuilder {
     }
 
     public String buildQueryString() {
+        if (!hasValue()) {
+            throw new IllegalStateException("clientId does not exist.");
+        }
         return CLIENT_ID + "=" + this.getValue();
     }
 }

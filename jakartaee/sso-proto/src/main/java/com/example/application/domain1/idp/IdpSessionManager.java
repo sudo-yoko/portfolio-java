@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.example.application.CallbackBuilder;
+import com.example.application.ClientIdBuilder;
 import com.example.application.SessionManager;
 import com.example.application.UrlBuilder;
 
@@ -44,9 +45,26 @@ class IdpSessionManager {
             return true;
         }
         logger.severe(LOG_PREFIX + "session invalid.");
+        ClientIdBuilder clientId = new ClientIdBuilder(req);
+        CallbackBuilder callback = new CallbackBuilder(req);
+        if (!clientId.hasValue()) {
+            logger.info(LOG_PREFIX + "clientId does not exist.");
+            UrlBuilder authentication = new UrlBuilder(req.getContextPath() + "/domain1/login/auth");
+            resp.sendRedirect(authentication.build());
+            return false;
+        }
+        if (!callback.hasValue()) {
+            logger.info(LOG_PREFIX + "callback does not exist.");
+            UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
+            CallbackBuilder reqUri = new CallbackBuilder(req.getRequestURI());
+            authorization.appendQueryString(reqUri.buildQueryString());
+            authorization.appendQueryString(clientId.buildQueryString());
+            resp.sendRedirect(authorization.build());
+            return false;
+        }
         UrlBuilder authorization = new UrlBuilder(req.getContextPath() + "/domain1/idp/auth");
-        CallbackBuilder callback = new CallbackBuilder(req.getRequestURI());
         authorization.appendQueryString(callback.buildQueryString());
+        authorization.appendQueryString(clientId.buildQueryString());
         resp.sendRedirect(authorization.build());
         return false;
     }
