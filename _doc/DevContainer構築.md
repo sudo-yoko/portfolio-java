@@ -1,6 +1,6 @@
-# DevContainer 構築手順
+DevContainer 構築手順
 
-### devcontainer.jsonを用いてコンテナをビルドする
+## .devcontainer.jsonを用いてコンテナをビルドする
 
 ```jsonc
 // devcontainer.json
@@ -10,9 +10,9 @@
 }
 ```
 
-Java 11 と 17 を使用するため、それが標準パッケージとして含まれるDebian 11 (bullseye) を使用する
+※ Java 11 と 17 を使用するため、それが標準パッケージとして含まれるDebian 11 (bullseye) を使用する
 
-### Java 環境のインストール
+## Java 環境のインストール
 
 ※ Debian 11 はサポート切れでアーカイブされているため、apt は使用しない。
 
@@ -64,7 +64,7 @@ sdk use java 11.0.22-tem
 sdk default java 17.0.10-tem
 ```
 
-### その他コマンドメモ
+## その他コマンドメモ
 
 ローカルリポジトリの削除
 
