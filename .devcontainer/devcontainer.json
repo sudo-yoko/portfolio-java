@@ -1,20 +1,10 @@
 {
-	"name": "Debian",
-	"image": "mcr.microsoft.com/devcontainers/base:bullseye"
+  "name": "Debian",
+  "image": "mcr.microsoft.com/devcontainers/base:trixie",
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {
+      "version": "latest"
+    }
+  },
+  "forwardPorts": [6080]
 }
-// コンテナ作成後に以下のコマンド
-// Mavenを追加
-// sudo apt update
-// sudo apt install -y maven
-// Java11追加
-// sudo apt-get update
-// sudo apt-get install -y openjdk-11-jdk
-// Java17追加
-// sudo apt-get update
-// sudo apt-get install -y openjdk-17-jdk
-// Java切り替え(java)
-// sudo update-alternatives --config java
-// Java切り替え(javac)
-// sudo update-alternatives --config javac
-// 
-// rm -rf ~/.m2/repository
