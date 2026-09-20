@@ -2,17 +2,17 @@
 
 ### devcontainer.jsonを用いてコンテナをビルドする
 
-```json
+```jsonc
 // devcontainer.json
 {
   "name": "Debian",
-  "image": "mcr.microsoft.com/devcontainers/base:bullseye"
+  "image": "mcr.microsoft.com/devcontainers/base:bullseye",
 }
 ```
 
 Java 11 と 17 を使用するため、それが標準パッケージとして含まれるDebian 11 (bullseye) を使用する
 
-### インストール
+### Java 環境のインストール
 
 ※ Debian 11 はサポート切れでアーカイブされているため、apt は使用しない。
 
@@ -63,6 +63,8 @@ sdk use java 11.0.22-tem
 # デフォルトの Java を Java 17 に固定・変更する
 sdk default java 17.0.10-tem
 ```
+
+### その他コマンドメモ
 
 ローカルリポジトリの削除
 
