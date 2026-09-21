@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // vscode-extentions: java-location-copyの設定
+    {
+      "name": "Run java-location-copy",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/add-ons/vscode-extensions/java-location-copy"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/add-ons/vscode-extensions/java-location-copy/out/**/*.js"
+      ],
+      "preLaunchTask": "java-location-copy: watch"
+    }
+  ]
+}

@@ -14,8 +14,9 @@
   "contributes": {
     "commands": [
       {
-        "command": "java-location-copy.helloWorld",
-        "title": "Hello World"
+        "command": "java-location-copy.copyMetadata",
+        "category": "Java Location Copy",
+        "title": "メソッド情報をクリップボードにコピー"
       }
     ]
   },
