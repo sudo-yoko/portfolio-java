@@ -2,25 +2,28 @@ import path from "path";
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-  const command = "java-location-copy.copyMetadata";
+  // const command = "java-location-copy.copyMetadata";
+  const command = context.extension.packageJSON.contributes.commands[0].command;
   const callback = async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) return;
     const segments = editor.document.uri.fsPath.split(path.sep);
 
-    // プロジェクト名
+    // フォルダ構造のチェック。"src/main/java" であること。
     const srcIdx = segments.indexOf("src");
     if (srcIdx <= 0) return structureErr();
+    if (segments[srcIdx + 1] !== "main") return structureErr();
+    if (segments[srcIdx + 2] !== "java") return structureErr();
+
+    // プロジェクト名
     const project = segments[srcIdx - 1];
 
     // パッケージ名
-    const mainIdx = segments.indexOf("java");
-    if (mainIdx === -1 || mainIdx >= segments.length - 1) return structureErr();
-    const mainSegments = segments.slice(mainIdx + 1);
-    const packageName = mainSegments.slice(0, -1).join(".");
+    const section = segments.slice(srcIdx + 3);
+    const packageName = section.slice(0, -1).join(".");
 
     // クラス名
-    const fileName = mainSegments[mainSegments.length - 1];
+    const fileName = section[section.length - 1];
     const className = path.parse(fileName).name;
 
     // メソッド名
