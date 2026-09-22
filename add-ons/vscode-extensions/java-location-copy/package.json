@@ -3,6 +3,11 @@
   "displayName": "java-location-copy",
   "description": "Java location copy",
   "version": "0.0.1",
+  "publisher": "sudo-yoko",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sudo-yoko/portfolio-java.git"
+  },
   "engines": {
     "vscode": "^1.138.0"
   },
@@ -18,7 +23,16 @@
         "category": "Java Location Copy",
         "title": "メソッド情報をクリップボードにコピー"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "java-location-copy.copyMetadata",
+          "when": "editorTextFocus",
+          "group": "copy"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

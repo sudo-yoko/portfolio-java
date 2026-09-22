@@ -12,7 +12,6 @@
       "outFiles": [
         "${workspaceFolder}/add-ons/vscode-extensions/java-location-copy/out/**/*.js"
       ],
-      "preLaunchTask": "java-location-copy: watch"
     }
   ]
 }
