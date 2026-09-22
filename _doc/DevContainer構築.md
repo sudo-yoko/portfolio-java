@@ -95,7 +95,7 @@ ls -la /usr/local/share/desktop-init.sh
 
 `-rwxr-xr-x` とファイル情報が表示されれば、desktop-lite のインストールは成功している。
 
-Eclipse (GTKアプリ) および noVNC 動作用ライブラリのインストール
+### Eclipse (GTKアプリ) および noVNC 動作用ライブラリのインストール
 
 ```bash
 sudo apt-get update
@@ -111,7 +111,7 @@ sudo apt-get install -y \
   x11-apps
 ```
 
-Eclipse のダウンロード
+### Eclipse のインストール
 
 ```bash
 # 保存用ディレクトリ作成
@@ -129,7 +129,26 @@ ls -la ~/eclipse_202312/eclipse/eclipse
 rm eclipse.tar.gz
 ```
 
-GUI サービスの起動と確認
+Eclipse 日本語化
+
+```bash
+# Pleiades zip のダウンロード
+# 一時ディレクトリに Pleiades（日本語化プラグイン）をダウンロードする。
+curl -L -o /tmp/pleiades.zip "https://ftp.jaist.ac.jp/pub/mergedoc/pleiades/build/stable/pleiades.zip"
+
+# ダウンロードが完了したら、ファイルサイズを確認
+ls -lh /tmp/pleiades.zip
+
+# Eclipse ディレクトリへ解凍・上書き
+unzip -o /tmp/pleiades.zip -d ~/eclipse_202312/eclipse/
+
+# eclipse.ini に日本語化エージェント設定を追加（重複防止付き）
+if ! grep -q "pleiades.jar" ~/eclipse_202312/eclipse/eclipse.ini; then
+  echo "-javaagent:${HOME}/eclipse_202312/eclipse/plugins/jp.sourceforge.mergedoc.pleiades/pleiades.jar" >> ~/eclipse_202312/eclipse/eclipse.ini
+fi
+```
+
+### GUI サービスの起動と確認
 
 ```bash
 # デスクトップサービス（noVNC）をバックグラウンドで起動
@@ -145,5 +164,9 @@ curl -I http://localhost:6080
 2. ターミナルで以下を実行して Eclipse を起動する。
 
 ```bash
+# キャッシュをクリアして初回起動の場合
+DISPLAY=:1 ~/eclipse_202312/eclipse/eclipse -clean &
+
+# 2回目以降の起動の場合
 DISPLAY=:1 ~/eclipse_202312/eclipse/eclipse &
 ```
