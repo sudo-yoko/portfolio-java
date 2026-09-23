@@ -16,6 +16,9 @@
         <eclipse.ui.version>3.205.0</eclipse.ui.version>
         <eclipse.commands.version>3.11.200</eclipse.commands.version>
         <eclipse.jface.version>3.32.0</eclipse.jface.version>
+        <eclipse.jface.text.version>3.24.200</eclipse.jface.text.version>
+        <eclipse.jdt.core.version>3.36.0</eclipse.jdt.core.version>
+        <eclipse.jdt.ui.version>3.31.0</eclipse.jdt.ui.version>
         <eclipse.swt.version>3.124.200</eclipse.swt.version>
         <!-- This workspace runs in a Linux x86_64 container. -->
         <swt.platform>gtk.linux.x86_64</swt.platform>
@@ -58,6 +61,42 @@
             <groupId>org.eclipse.platform</groupId>
             <artifactId>org.eclipse.jface</artifactId>
             <version>${eclipse.jface.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.jface.text</artifactId>
+            <version>${eclipse.jface.text.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>${eclipse.jdt.core.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.ui</artifactId>
+            <version>${eclipse.jdt.ui.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>

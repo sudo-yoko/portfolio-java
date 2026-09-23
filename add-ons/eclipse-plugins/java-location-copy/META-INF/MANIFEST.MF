@@ -3,6 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Java-location-copy
 Bundle-SymbolicName: java-location-copy;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.ui
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.jface.text,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui
 Automatic-Module-Name: java.location.copy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
