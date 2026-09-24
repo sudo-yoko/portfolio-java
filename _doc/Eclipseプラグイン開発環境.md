@@ -99,6 +99,9 @@ DISPLAY=:1 ~/eclipse_202312/eclipse/eclipse &
 2. 生成された jar ファイルを dropins フォルダへ配置
 
 ```bash
+# dropins フォルダを削除（存在する場合）
+rm -rf ~/eclipse_202312/eclipse/dropins
+
 # dropins フォルダを作成（存在しない場合）
 mkdir -p ~/eclipse_202312/eclipse/dropins
 

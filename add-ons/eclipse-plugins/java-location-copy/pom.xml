@@ -128,7 +128,6 @@
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>plugin.xml</include>
-                    <include>icons/**</include>
                 </includes>
             </resource>
         </resources>
