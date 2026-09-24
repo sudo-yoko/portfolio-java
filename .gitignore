@@ -25,4 +25,7 @@ replay_pid*
 
 target/
 
-**/.metadata/
+bin/
+.settings/
+.classpath
+.project
