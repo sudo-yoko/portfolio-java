@@ -55,11 +55,34 @@ npm install -g @vscode/vsce
 ```
 
 プロジェクトルートで以下のコマンドを実行して .vsix ファイルを作成する
+
 ```bash
 vsce package
 ```
 
 拡張機能をインストールする
+
 ```bash
 code --install-extension xxx.vsix
+```
+
+インストールした拡張機能のアンインストール
+
+```bash
+code --uninstall-extension <publisher>.<extension-name>
+```
+
+`publisher`と`extension-name`は`package.json`で確認する。
+
+```jsonc
+// package.json
+{
+  "name": "java-location-copy",
+  "publisher": "sudo-yoko",
+  ...
+```
+
+```bash
+# アンインストール
+code --uninstall-extension sudo-yoko.java-location-copy
 ```

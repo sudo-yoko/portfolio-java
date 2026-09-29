@@ -26,14 +26,20 @@ export function activate(context: vscode.ExtensionContext) {
     const fileName = section[section.length - 1];
     const className = path.parse(fileName).name;
 
-    // メソッド名
+    // 選択のテキスト
     const selection = editor.selection;
-    const methodName = editor.document.getText(selection).trim();
-    if (!methodName) return noWordErr();
+    const selectedText = editor.document.getText(selection).trim();
+    if (!selectedText) return noWordErr();
     const lineNumber = selection.active.line + 1;
 
     // クリップボードにコピー
-    const clipboard = `${project}\n${packageName}\n${className}\nL${lineNumber}: ${methodName}`;
+    let clipboard = "";
+    if (selectedText === className) {
+      // 選択がクラス名の場合
+      clipboard = `${project}\n${packageName}\n${className}`;
+    } else {
+      clipboard = `${project}\n${packageName}\n${className}\nL${lineNumber}: ${selectedText}`;
+    }
     await vscode.env.clipboard.writeText(clipboard);
     vscode.window.showInformationMessage("クリップボードにコピーしました。");
   };
@@ -45,6 +51,8 @@ function structureErr() {
   vscode.window.showErrorMessage("Java のパッケージ構造が不正です。");
 }
 function noWordErr() {
-  vscode.window.showErrorMessage("メソッド名をハイライト選択してください。");
+  vscode.window.showErrorMessage(
+    "クラス名またはメソッド名をハイライト選択してください。",
+  );
 }
 export function deactivate() {}

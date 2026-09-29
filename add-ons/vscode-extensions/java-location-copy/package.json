@@ -21,7 +21,7 @@
       {
         "command": "java-location-copy.copyMetadata",
         "category": "Java Location Copy",
-        "title": "メソッド情報をクリップボードにコピー"
+        "title": "Javaの位置情報をクリップボードにコピー"
       }
     ],
     "menus": {
@@ -29,7 +29,7 @@
         {
           "command": "java-location-copy.copyMetadata",
           "when": "editorTextFocus",
-          "group": "copy"
+          "group": "navigation@1"
         }
       ]
     }
