@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // クラス名
     const fileName = section[section.length - 1];
-    const className = path.parse(fileName).name;
+    const className = path.parse(fileName).name; // TODO: 型名（TypeName）にする
 
     // 選択のテキスト
     const selection = editor.selection;

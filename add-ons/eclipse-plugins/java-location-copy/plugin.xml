@@ -10,7 +10,7 @@
       </category>
       <command
             categoryId="java-location-copy.commands.category"
-            name="メソッド情報をクリップボードにコピー"
+            name="Javaの位置情報をクリップボードにコピー"
             id="java-location-copy.commands.javaLocationCopyCommand">
       </command>
    </extension>
@@ -27,7 +27,7 @@
             locationURI="popup:#CompilationUnitEditorContext?after=additions">
          <command
                commandId="java-location-copy.commands.javaLocationCopyCommand"
-               label="メソッド情報をクリップボードにコピー"
+               label="Javaの位置情報をクリップボードにコピー"
                style="push">
          </command>
       </menuContribution>
