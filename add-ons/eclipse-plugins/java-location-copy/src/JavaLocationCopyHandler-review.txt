@@ -1,0 +1,107 @@
+JavaLocationCopyHandler.java 設計・命名レビュー
+レビュー日: 2026-10-01
+
+総評
+
+処理の流れは読みやすいですが、機能の規模に対してクラス分割が細かく、
+選択の検証と文字列整形の責務が混ざっています。
+命名は意味が通じるものの、Copy より Location や Selection を使うと
+役割が明確になります。
+
+以下の行番号はレビュー時点の JavaLocationCopyHandler.java を指します。
+
+1. 選択の検証を独立させたい（53行目、139行目）
+
+getElementAt() は、選択した名前の参照先ではなく、その位置を包含する
+Java 要素を返します。
+
+JDT公式仕様:
+https://help.eclipse.org/latest/topic/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/ITypeRoot.html#getElementAt(int)
+
+一方、139行目では文字列がメソッド名と一致するかだけを検証しています。
+このため、例えば foo メソッド内にある other.foo() の foo を選択しても、
+外側の foo メソッドとして通ってしまいます。
+また、型側には名前の検証がありません。
+
+「宣言の名前を選択する」仕様なら、名前のソース範囲と選択範囲を照合する
+のが自然です。その検証を済ませてから整形処理に渡すと、役割も明確に
+なります。
+
+2. 現在の Strategy は、抽象化の効果が小さい（112行目以降）
+
+共通インターフェースがありますが、呼び出し側は instanceof で分岐し、
+それぞれの具象クラスを直接生成しています。型を追加すると、結局その
+分岐も変更します。
+
+現状の2種類なら、以下のメソッドで十分だと思います。
+
+  formatTypeLocation(IType type)
+  formatMethodLocation(IMethod method, int lineNumber)
+
+型側が使わない CopyContext を受け取る必要もなくなります。
+また、プロジェクト名・パッケージ名・型名を組み立てる重複を共通化
+できます。今はクラスを増やすより、引数と責務を小さくする方が効果的です。
+
+3. CopyContext の内容と、利用側の引数が重複している（79行目以降）
+
+CopyContext は element を保持していますが、buildCopyText() には
+別途 element も渡しています。構造上、両者が異なる要素を指せてしまいます。
+
+また、整形処理が ITextSelection 全体を必要とするのは、行番号を取り出す
+ためだけです。検証後は lineNumber などの必要な値だけ渡す方が、
+読みやすく、EclipseのUIに依存しないテストも書きやすくなります。
+
+4. 到達しない null 処理が契約を曖昧にしている（119行目）
+
+type == null は、現在の instanceof IType type 経由では成立しません。
+
+そこで null を返すと、呼び出し側に「整形結果は null かもしれない」
+という契約が増えます。現在の構造なら削除して、整形処理は必ず文字列を
+返すとした方が明快です。メソッド側との扱いも揃います。
+
+命名の提案
+
+・JavaLocationCopyHandler
+  候補: 現状維持、または CopyJavaLocationHandler
+  現状でも明確。動詞を先にするとコマンドとして自然です。
+
+・CopyTextBuilder
+  候補: JavaLocationFormatter
+  実態は位置情報の文字列整形。段階的に組み立てるBuilderではありません。
+
+・CopyContext
+  候補: 残すなら JavaLocationSelection
+  何の情報を保持しているかが具体的になります。
+
+・CopyHandlerException
+  候補: InvalidSelectionException
+  現在の用途は未選択・不正な選択の通知です。
+
+・copy
+  候補: locationText
+  コピー操作ではなく、その対象文字列であることが伝わります。
+
+・cu
+  候補: compilationUnit
+  JDTでは通じる略語ですが、省略しなくても十分短い名前です。
+
+・TITLE
+  候補: DIALOG_TITLE
+  何のタイトルかが明確になります。
+
+良い点
+
+projectName、packageName、declaringType、lineNumber は素直で良い命名です。
+早期リターンでネストを抑えている点と、内部クラスを private static に
+閉じている点も良いです。
+
+推奨する改善順序
+
+まず、選択の検証を整形から分離し、2つのStrategyを小さな整形メソッドに
+まとめることを勧めます。大きな構成変更をせずに、正確さと読みやすさを
+改善できます。
+
+レビュー範囲
+
+静的レビューです。Eclipse上での動作確認はしていません。
+レビューに伴うJavaコードの変更は行っていません。
