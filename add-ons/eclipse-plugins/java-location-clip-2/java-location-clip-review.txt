@@ -1,0 +1,68 @@
+java-location-clip 設計・命名レビュー
+
+対象: add-ons/eclipse-plugins/java-location-clip/src の4クラス
+
+総評
+ハンドラーと文字列生成を分けている方向は良いです。主な改善点は、選択の検証責務と、名前が示す意味の明確化です。
+
+1. 優先度高: 選択の検証を一か所にまとめる
+対象: ClipTextBuilder.java:10、ClipJavaLocationHandler.java:32
+
+メソッドの場合だけ選択文字列を検証し、型の場合はそのまま出力しています。さらに、空の選択はハンドラー側で検証しています。
+
+getElementAt() が返すのは、その位置を包含するJava要素です。そのため、「クラス名またはメソッド名を選択」という案内に対し、型の宣言範囲内の別の文字列でもコピーできる可能性があります。メソッドも文字列一致だけなので、宣言名の位置かどうかは判定しません。
+
+選択対象の解決と検証をまとめ、ClipTextBuilder には検証済みの情報を渡す設計を勧めます。宣言名の選択を必須にするなら、文字列だけでなく名前の範囲も検証すると仕様が明確になります。
+
+参考: Eclipse JDT ITypeRoot#getElementAt 公式API
+https://help.eclipse.org/latest/ntopic/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/ITypeRoot.html
+
+2. 優先度中: ClipTextBuilder は検証と整形を兼ねている
+対象: ClipTextBuilder.java:34
+
+選択の妥当性判定、宣言型の取得、出力の整形を行っています。出力形式だけを変更・テストしたい場合にも、JDT要素や選択情報が必要になります。
+
+機能を拡張する予定があるなら、次の分担が自然です。
+- JavaLocationResolver: 選択から位置情報を解決・検証する
+- JavaLocation: プロジェクト名、パッケージ名、型名、行番号、メソッド名を保持する
+- JavaLocationFormatter: 位置情報を文字列に変換する
+
+現在の規模なら、まず検証処理を切り出す程度で十分です。
+
+3. 優先度中: ClipContext の保持情報と契約を絞る
+対象: ClipContext.java:4
+
+ITextSelection 全体と、そこから取得した文字列の両方を保持しています。後続処理が選択オブジェクトから使うのは開始行だけなので、selectedText と lineNumber を保持する形でも足ります。
+
+また、getSelectedText() が返す値は実際には trim() 済みです。加工するなら trimmedSelectedText と明示するか、元の文字列を保持して検証時に加工すると理解しやすくなります。
+
+element の null は許可し、textSelection の null は拒否する契約も明文化したいところです。引数不正として扱うなら、後者には IllegalArgumentException が自然です。
+
+4. 優先度中: 想定内のエラーと処理失敗を明確に分ける
+対象: ClipJavaLocationHandler.java:58
+
+両者を捕捉していますが、ClipException という名前だけでは「選択が不適切」という用途が伝わりません。
+
+InvalidJavaLocationSelectionException などにすると意図が明確です。予期しない例外については、printStackTrace() だけでなく、プラグインのログに原因を記録する設計が保守しやすいです。
+
+命名の候補
+- ClipJavaLocationHandler → CopyJavaLocationHandler
+  操作がクリップボードへのコピーだと伝わる。
+- ClipContext → JavaLocationSelection
+  保持する情報の用途を示せる。
+- ClipTextBuilder → JavaLocationFormatter
+  現状は状態を蓄積するBuilderではなく整形処理。
+- element / getElement() → selectedElement / getSelectedElement()
+  どの要素かが明確。
+- cu → compilationUnit
+  略語の解読が不要。
+- clip → clipboardText
+  文字列の用途が明確。
+- items → lines
+  配列の各要素が出力行だと分かる。
+
+加えて、全クラスがデフォルトパッケージなので、プラグイン固有のパッケージにまとめることを勧めます。
+
+確認範囲
+静的レビューのみ。Eclipse上での動作確認は実施していません。
+レビュー対象のコードは変更していません。
