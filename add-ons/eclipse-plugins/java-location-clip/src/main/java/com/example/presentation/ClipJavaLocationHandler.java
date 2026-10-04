@@ -16,8 +16,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.example.InvalidSelectionException;
-import com.example.OperationIgnoredException;
-import com.example.application.JavaLocationResolver;
+import com.example.application.JavaLocationProcessorFactory;
 
 public class ClipJavaLocationHandler extends AbstractHandler {
 	private static final String DIALOG_TITLE = "Javaの位置情報をクリップボードにコピー";
@@ -27,11 +26,11 @@ public class ClipJavaLocationHandler extends AbstractHandler {
 		IEditorPart editor = HandlerUtil.getActiveEditor(event);
 		try {
 			if (editor == null) {
-				throw new OperationIgnoredException();
+				return null;
 			}
 			IJavaElement element = JavaUI.getEditorInputJavaElement(editor.getEditorInput());
 			if (!(element instanceof ICompilationUnit)) {
-				throw new OperationIgnoredException();
+				return null;
 			}
 			ICompilationUnit cu = (ICompilationUnit) element;
 			// ASTの同期（連続実行・編集直後の誤作動防止）
@@ -40,17 +39,14 @@ public class ClipJavaLocationHandler extends AbstractHandler {
 			}
 			ISelection selection = HandlerUtil.getCurrentSelection(event);
 			if (!(selection instanceof ITextSelection)) {
-				throw new OperationIgnoredException();
+				return null;
 			}
-			String clip = JavaLocationResolver.resolve(cu, selection).buildClipText();
+			String clip = JavaLocationProcessorFactory.create(cu, selection).buildClipText();
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
 			MessageDialog.openInformation(editor.getSite().getShell(), DIALOG_TITLE, "クリップボードにコピーしました\n" + clip);
 
 		} catch (InvalidSelectionException e) {
 			MessageDialog.openError(editor.getSite().getShell(), DIALOG_TITLE, e.getMessage());
-
-		} catch (OperationIgnoredException e) {
-			return null;
 
 		} catch (Exception e) {
 			e.printStackTrace();

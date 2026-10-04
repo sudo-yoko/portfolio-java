@@ -13,7 +13,7 @@ public class JavaLocationFormatter {
         return format(new String[] {
                 location.getProjectName(),
                 location.getPackageName(),
-                location.getClassName(),
+                location.getTypeName(),
                 String.format("L%d: %s", location.getLineNumber(), location.getMethodName())
         });
     }

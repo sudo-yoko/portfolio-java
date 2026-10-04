@@ -18,16 +18,16 @@ public class JavaLocationMapper {
                 type.getTypeQualifiedName('$'));
     }
 
-    public static MethodLocation map(IMethod method, MethodSelection context) {
+    public static MethodLocation map(IMethod method, MethodSelection selection) {
         IType declaringType = method.getDeclaringType();
         if (declaringType == null) {
-            throw new IllegalStateException("クラス情報の取得に失敗しました。");
+            throw new IllegalStateException("型情報の取得に失敗しました。");
         }
         return new MethodLocation(
                 method.getJavaProject().getElementName(),
                 declaringType.getPackageFragment().getElementName(),
                 declaringType.getTypeQualifiedName('$'),
                 method.getElementName(),
-                context.getLineNumber());
+                selection.getLineNumber());
     }
 }

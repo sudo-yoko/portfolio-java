@@ -3,15 +3,15 @@ package com.example.domain;
 public class MethodLocation {
     private final String projectName;
     private final String packageName;
-    private final String className;
+    private final String typeName;
     private final String methodName;
     private final int lineNumber;
 
     public MethodLocation(
-        String projectName, String packageName, String className, String methodName, int lineNumber) {
+            String projectName, String packageName, String typeName, String methodName, int lineNumber) {
         this.projectName = projectName;
         this.packageName = packageName;
-        this.className = className;
+        this.typeName = typeName;
         this.methodName = methodName;
         this.lineNumber = lineNumber;
     }
@@ -24,8 +24,8 @@ public class MethodLocation {
         return packageName;
     }
 
-    public String getClassName() {
-        return className;
+    public String getTypeName() {
+        return typeName;
     }
 
     public String getMethodName() {
@@ -35,5 +35,4 @@ public class MethodLocation {
     public int getLineNumber() {
         return lineNumber;
     }
-
 }
