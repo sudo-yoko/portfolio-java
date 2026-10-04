@@ -2,7 +2,7 @@ java-location-copy 設計に関する質疑応答
 
 作成日: 2026-10-04
 対象: add-ons/eclipse-plugins/java-location-copy
-この文書は、レビュー後の設計に関する6件の質疑応答を整理したものです。
+この文書は、レビュー後の設計に関する7件の質疑応答を整理したものです。
 既存の java-location-copy-review.txt とは別に保存しています。
 評価は静的レビューに基づきます。ビルドやEclipse上の動作検証による評価ではありません。
 
@@ -174,6 +174,59 @@ Eclipse固有の選択解析は外側、位置情報の有効性と整形はEcli
 現在はレイヤード構成で責務と処理の流れを明確にするのが最も扱いやすいと考えます。
 この構成は提案であり、実装済みの変更ではありません。
 
+Q7. DDDに寄せることは特段しないで、レイヤードアーキテクチャにする場合、
+    どう直したら良くなりますか。
+
+A. 現在の責務分離を維持し、アプリケーション層を簡素化するのがよいです。
+DDDに寄せるためのモデルや抽象化を追加する必要はありません。
+
+推奨する構成:
+
+presentation
+  CopyJavaLocationHandler
+application
+  JavaLocationTextBuilder
+  JavaLocationMapper
+  JavaSelectionValidator
+model
+  TypeLocation
+  MethodLocation
+format
+  JavaLocationFormatter
+
+1. FactoryとProcessorを一つにまとめる
+   JavaLocationProcessorFactory、JavaLocationProcessor、TypeProcessor、
+   MethodProcessorを JavaLocationTextBuilder にまとめます。
+   入口は build(ICompilationUnit, ITextSelection) とし、選択の検証、
+   型・メソッドの分岐、MapperとFormatterの呼び出しを担当させます。
+
+2. 選択モデルを省略する
+   TypeSelection / MethodSelection は削除し、選択文字列と行番号を必要な
+   処理に渡します。Mapperには IMethod と行番号を渡せば十分です。
+   選択に必要な情報が増えたときに共通のデータクラスを導入できます。
+
+3. 検証をアプリケーション層へ移す
+   コピー対象として正しい選択かを判定する規則は、ユースケースの規則なので
+   JavaSelectionValidator に置きます。選択範囲まで検証する場合、このクラスが
+   JDT APIに依存しても問題ありません。
+
+4. モデルと整形の役割を明示する
+   現在のdomainをmodelとformatに分けると実態が伝わります。
+   位置情報モデルは単純なデータクラス、またはrecordで十分です。
+   必須値と正の行番号のチェックは、DDDとは関係なく生成時に保証すると
+   扱いやすくなります。
+
+5. HandlerをUI処理に絞る
+   エディタ・選択の取得、必要な同期、サービスの呼び出し、クリップボードへの
+   書き込み、通知・ログを担当させます。選択の妥当性判定と文字列の組み立ては
+   サービス側に置きます。
+
+modelとformatは役割別のパッケージであり、追加の階層という意味ではありません。
+依存の方向は presentation → application → model / format に保ちます。
+着手前に、宣言名だけを対象にするか、行番号は何を表すかを決めてください。
+その仕様を保ったまま整理すれば、クラスを減らしつつ入口と責務を明確にできます。
+ここに記載した構成変更は提案であり、実装は行っていません。
+
 質疑応答から整理した改善方針
 
 ・DDDの形式的な導入より、選択仕様とモデルの契約を優先します。
@@ -186,4 +239,5 @@ Eclipse固有の選択解析は外側、位置情報の有効性と整形はEcli
 
 この文書は質疑応答の記録です。ここに記載した改善案の実装は行っていません。
 既存のレビュー文書、ソース、設定ファイルは変更していません。
-コミットは行っていません。
+初回保存とQ6までの追記時にはコミットを行っていません。
+Q7の追記時に、ユーザーの指示によりこの文書をコミット対象としました。
