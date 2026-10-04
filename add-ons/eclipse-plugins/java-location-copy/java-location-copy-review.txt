@@ -1,0 +1,165 @@
+java-location-copy 全体設計・命名・設定ファイルレビュー
+
+レビュー日: 2026-10-04
+対象: add-ons/eclipse-plugins/java-location-copy の現在の全ソース・設定
+未コミットのクラス名変更と設定変更を含めて確認しました。
+
+総評
+
+UI、JDT要素の変換、位置情報モデル、文字列整形の責務を分ける方向性は良いです。
+domain が Eclipse API に依存せず、位置情報モデルのフィールドが final である点も
+適切です。CopyJavaLocationHandler への改名と plugin.xml の登録更新は整合しています。
+主な改善点は、選択の契約、処理クラスの分割粒度、ビルド経路の明確化です。
+以下は確認できた事実、仕様確認事項、任意の改善案を区別して記載しています。
+
+1. 全体設計
+
+1-1. 選択検証は宣言位置を保証していない（仕様確認・優先度高）
+対象: src/main/java/com/example/application/JavaLocationProcessorFactory.java:23,27
+      src/main/java/com/example/domain/SelectionValidator.java:27
+選択開始位置の要素を取得し、trim後の文字列と要素名の一致を検証しています。
+宣言名の範囲を選択したことは検証していません。例えば foo() 内の再帰呼び出し
+foo を選択しても通る可能性があります。これは静的分析で、動作確認済みの不具合
+ではありません。宣言名だけを対象にする仕様なら、名前のソース範囲と選択範囲を
+照合してください。前後の空白を許容するなら文字列のtrimと位置の扱いも揃えます。
+メソッド内部の同名文字列も対象にする仕様なら、その契約を明記してください。
+
+1-2. Factoryの引数型と実際の前提が一致していない（優先度中）
+対象: src/main/java/com/example/application/JavaLocationProcessorFactory.java:18,21
+ISelection を受け付け、無条件で ITextSelection にキャストしています。
+現在のHandler経由では型を確認していますが、Factory単体の契約は広すぎます。
+引数を ITextSelection にすると、不正な呼び出しを型で防げます。
+
+1-3. FactoryとProcessorの分割を簡素化できる（改善案）
+対象: src/main/java/com/example/application/JavaLocationProcessorFactory.java:17
+      src/main/java/com/example/application/MethodProcessor.java:22
+      src/main/java/com/example/application/TypeProcessor.java:22
+Factoryは正規化・空選択検証・要素取得・Processor生成を行い、Processorは
+名前検証・モデル変換・整形を行います。2種類の処理に対して経由するクラスが多めです。
+JavaLocationTextBuilder.build(...) に分岐と実行をまとめ、MapperとFormatterを
+呼ぶ構成でも十分です。処理種類を増やす予定があるなら現状の構成を維持できます。
+JavaLocationProcessorFactoryという名前自体は、現在の戻り値に合っています。
+
+1-4. 選択モデルの分割価値を検討する（改善案）
+対象: src/main/java/com/example/domain/TypeSelection.java:3
+      src/main/java/com/example/domain/MethodSelection.java:3
+選択モデルは文字列と行番号の保持が中心です。固有の規則を増やさないなら、
+共通の選択情報への統合や引数の直接受け渡しで処理を追いやすくできます。
+保持情報が異なる TypeLocation / MethodLocation の分割には意味があります。
+
+1-5. モデルの不変条件を明確にする（優先度中）
+対象: src/main/java/com/example/domain/TypeLocation.java:8
+      src/main/java/com/example/domain/MethodLocation.java:10
+      src/main/java/com/example/domain/SelectionValidator.java:9
+位置情報モデルは null や0以下の行番号を受け付けます。必須値の非nullと1以上の
+行番号を生成時に保証すると、整形側の前提が明確です。デフォルトパッケージを
+表す空文字は許容してください。Validatorのnull契約も明確にするとよいです。
+現在のFactory経由ではnullを空文字に変換しているため、その経路は保護されています。
+
+1-6. UI基盤と例外処理を揃える（改善案）
+対象: src/main/java/com/example/presentation/CopyJavaLocationHandler.java:45,52
+クリップボード操作だけAWTを使用しています。SWTへ揃えるとUI基盤の依存を
+統一できます。採用時はクリップボードのリソース解放も実装してください。
+printStackTrace() はプラグインのログへ置き換えると失敗を追跡しやすくなります。
+
+1-7. 不要な分岐（優先度低）
+対象: src/main/java/com/example/application/JavaLocationProcessorFactory.java:42
+selectedElementがnullなら29行目までに例外になるため、42行目のnull分岐は不要です。
+
+2. 命名
+
+適切な名前:
+・CopyJavaLocationHandler: コピー操作を明示しています。
+・JavaLocationMapper: JDT要素からモデルへの変換に合っています。
+・JavaLocationFormatter、formatType / formatMethod: 整形の責務に合っています。
+・TypeLocation / MethodLocation、typeName: 型とメソッドを区別できています。
+・InvalidSelectionException: 選択不備を表す名前に合っています。
+
+改善案:
+・buildClipText() → buildClipboardText()
+  Clipの曖昧さを解消します。interface・実装・呼び出し元をまとめて変更します。
+・clip → clipboardText
+  保持している値を明示します。
+・lineNumber / getLineNumber() → selectionStartLineNumber / getSelectionStartLineNumber()
+  現在は宣言行ではなく選択開始行です。宣言行に仕様を変えるなら
+  declarationLineNumber が適切です。
+・cu → compilationUnit
+  引数と変数の意味を明示します。
+・Formatter内の String[] location → parts または lines
+  位置情報モデルと整形用配列を区別します。
+・com.example → プロジェクト固有の名前空間
+  配布時はパッケージ、Maven groupId、Handler登録を揃えて変更します。
+・コマンドカテゴリ名「カスタムプラグイン」→「Java Location Copy」など
+  設定画面で機能を識別しやすくします。
+
+3. 設定ファイル
+
+3-1. plugin.xml（現在の参照は整合）
+対象: plugin.xml:8,12,14,20,21,29
+Handlerは com.example.presentation.CopyJavaLocationHandler でソースと一致します。
+commandIdとcategoryIdも定義済みのidと一致しています。
+XML構文、Handlerソースの存在と名前、commandId参照を読み取り検証しました。
+実際のメニュー表示、有効化、クラスロードはEclipse上で未確認です。
+
+3-2. MavenとPDEのソースルート表記が異なる（整備案）
+対象: build.properties:1
+実際のJavaソースは src/main/java/ で、Mavenは標準構成で扱います。
+build.properties の source.. は src/ です。この違いだけでビルド失敗とは
+断定しませんが、PDEも利用するなら src/main/java/ に揃えると構成が明確です。
+MavenとPDEのどちらを正式なビルド経路とするかも記録してください。
+
+3-3. JAR設定に以前指摘したファイル欠落はない（解消済み）
+対象: pom.xml:129,145
+plugin.xmlとMETA-INF/MANIFEST.MFは存在し、POMから参照されています。
+設定上はプラグイン記述とマニフェストをJARへ含める構成です。
+生成JARの中身は今回未検証です。
+
+3-4. バージョンの対応を明確にする（優先度中）
+対象: pom.xml:9
+      META-INF/MANIFEST.MF:5
+Mavenは 1.0-SNAPSHOT、OSGiは 1.0.0.qualifier です。異なる表記自体が直ちに
+不正ではありませんが、配布時に成果物名とBundle-Versionの対応規則を決めてください。
+現在のPOMにはqualifierをビルド識別子へ置換する処理が記載されていません。
+置換が必要なら配布手順を整備してください。
+
+3-5. 対象環境と依存管理を明確にする（整備案）
+対象: pom.xml:15-24,39-40
+      META-INF/MANIFEST.MF:6-11
+Java 17の指定はPOMとマニフェストで一致しています。POMはEclipse 2023-12と
+Linux x86_64向けSWTを前提にしています。この環境専用なら妥当です。
+他OSでもビルドするならswt.platformをプロファイル等で切り替える方針を用意します。
+Maven依存とOSGi依存は別管理で、Require-Bundleにはバージョン範囲がありません。
+配布時は対象Eclipse環境と互換性の確認方法を明記してください。
+org.eclipse.core.commands、org.eclipse.jfaceなど直接使用するAPIのOSGi上の
+可視性は、実際のバンドルの再エクスポート設定にも依存します。今回これらの
+直接宣言がないという理由だけでクラスロード不具合とは断定しません。
+対象環境で解決を確認するか、直接依存を明示する方針を検討してください。
+
+3-6. 表示名と識別名（優先度低）
+対象: META-INF/MANIFEST.MF:3-4
+      plugin.xml:8,14
+Bundle-Nameを Java Location Copy などへ揃えると読みやすくなります。
+Bundle-SymbolicNameとコマンドid接頭辞は現在 java-location-copy で揃っています。
+固有の名前空間へ変更する際は既存キー設定等への影響を考慮し、id変更を
+クラス名変更とは別に判断してください。
+
+4. 前回から解消された点
+
+・ClipJavaLocationHandler は CopyJavaLocationHandler に改名されています。
+・plugin.xmlのHandler登録は完全修飾名で現在の実装に一致しています。
+・plugin.xml、META-INF/MANIFEST.MFは存在し、POMから参照されています。
+これらを現状の未解決問題として扱う必要はありません。
+
+5. 今後の検証候補
+
+通常の型名・メソッド名、再帰呼び出し名、空選択、前後に空白を含む選択、
+ネスト型、デフォルトパッケージ、編集直後の実行で、選択仕様と出力を確認します。
+配布時はJAR内のHandlerクラス・plugin.xml・マニフェストを検査し、対象Eclipseで
+メニュー表示、コマンド実行、クリップボード書き込みを確認してください。
+
+レビュー範囲・保存内容
+
+全ソース、plugin.xml、META-INF/MANIFEST.MF、build.properties、pom.xmlを
+静的レビューしました。XML構文とHandler・commandId参照を読み取り検証しました。
+ビルド、生成JARの検査、Eclipse上での動作確認は行っていません。
+このレビュー文書のみ更新しました。実装・設定の変更とコミットは行っていません。

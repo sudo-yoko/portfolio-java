@@ -18,7 +18,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.example.InvalidSelectionException;
 import com.example.application.JavaLocationProcessorFactory;
 
-public class ClipJavaLocationHandler extends AbstractHandler {
+public class CopyJavaLocationHandler extends AbstractHandler {
 	private static final String DIALOG_TITLE = "Javaの位置情報をクリップボードにコピー";
 
 	@Override
