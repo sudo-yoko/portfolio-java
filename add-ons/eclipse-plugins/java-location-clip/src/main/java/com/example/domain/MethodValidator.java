@@ -1,11 +1,11 @@
 package com.example.domain;
 
-import com.example.ClipException;
+import com.example.InvalidSelectionException;
 
 public class MethodValidator {
-    public static void validate(MethodContext context, String methodName) {
+    public static void validate(MethodSelection context, String methodName) {
         if (!context.getSelectedText().equals(methodName)) {
-            throw new ClipException("メソッド名を選択してください。");
+            throw new InvalidSelectionException("メソッド名を選択してください。");
         }
     }
 }

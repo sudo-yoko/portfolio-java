@@ -1,4 +1,4 @@
-package com.example.application;
+package com.example.presentation;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -15,8 +15,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.example.ClipException;
-import com.example.domain.LocationFormatter;
+import com.example.InvalidSelectionException;
+import com.example.OperationIgnoredException;
+import com.example.application.JavaLocationResolver;
 
 public class ClipJavaLocationHandler extends AbstractHandler {
 	private static final String DIALOG_TITLE = "Javaの位置情報をクリップボードにコピー";
@@ -24,13 +25,13 @@ public class ClipJavaLocationHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		if (editor == null) {
-			return null;
-		}
 		try {
+			if (editor == null) {
+				throw new OperationIgnoredException();
+			}
 			IJavaElement element = JavaUI.getEditorInputJavaElement(editor.getEditorInput());
 			if (!(element instanceof ICompilationUnit)) {
-				return null;
+				throw new OperationIgnoredException();
 			}
 			ICompilationUnit cu = (ICompilationUnit) element;
 			// ASTの同期（連続実行・編集直後の誤作動防止）
@@ -39,21 +40,17 @@ public class ClipJavaLocationHandler extends AbstractHandler {
 			}
 			ISelection selection = HandlerUtil.getCurrentSelection(event);
 			if (!(selection instanceof ITextSelection)) {
-				return null;
+				throw new OperationIgnoredException();
 			}
-
-			ClipProcessor processor = ClipProcessResolver.resolve(cu, selection);
-			if (processor == null) {
-				return null;
-			}
-			String[] location = processor.getJavaLocation();
-			String clip = LocationFormatter.format(location);
-
+			String clip = JavaLocationResolver.resolve(cu, selection).buildClipText();
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
 			MessageDialog.openInformation(editor.getSite().getShell(), DIALOG_TITLE, "クリップボードにコピーしました\n" + clip);
 
-		} catch (ClipException e) {
+		} catch (InvalidSelectionException e) {
 			MessageDialog.openError(editor.getSite().getShell(), DIALOG_TITLE, e.getMessage());
+
+		} catch (OperationIgnoredException e) {
+			return null;
 
 		} catch (Exception e) {
 			e.printStackTrace();

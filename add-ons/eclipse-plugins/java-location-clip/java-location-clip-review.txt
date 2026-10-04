@@ -1,74 +1,95 @@
-java-location-clip 設計・命名レビュー
+java-location-clip 全体設計・命名レビュー
 
 対象: add-ons/eclipse-plugins/java-location-clip
+レビュー日: 2026-10-04
+レビュー対象: 未コミット変更を含む現在の実装
 
 総評
-Eclipse 操作と位置情報の処理を分離する方向性は良いですが、検証・モデル・整形の境界を揃えると、もっと少ないクラスで理解しやすくできます。
 
-優先度順の指摘
+UI・JDTからの変換・モデル・文字列整形を分ける方向性は良いです。
+domain が Eclipse API に依存していない点、TypeLocation と MethodLocation を
+分けてフィールドを final にした点は維持したい設計です。
 
-1. 型名の検証が実行されていない
-   対象: src/main/java/com/example/application/ClipProcessResolver.java:31
-   IType を取得すると、そのまま TypeProcessor を返しています。一方、メソッドでは選択文字列と名前を照合しています。
-   型については、名前以外を選択しても IType が返る箇所ならコピーされます。TypeValidator と TypeContext も未使用です。
-   名前の選択を必須にする仕様なら、型とメソッドの両方で同じ検証を通すべきです。
+改善点（優先順）
 
-2. 位置情報を取得する API が整形まで担当している
-   対象: src/main/java/com/example/application/ClipProcessor.java:3
-   getJavaLocation() は Location ではなく String[] を返します。実装も検証・位置情報の生成・表示用の整形を担当しています。
-   resolveLocation() が JavaLocation を返し、LocationFormatter.format(location) がコピー用の文字列を返す構成にすると、責務と名前が一致します。
-   文字列配列を中間表現にする必要もなくなります。
+1. JavaLocationResolver の名前と戻り値が一致していない
+   対象: src/main/java/com/example/application/JavaLocationResolver.java:18
+         src/main/java/com/example/application/MethodProcessor.java:22
+   Resolver は位置情報ではなく JavaLocationProcessor を返しています。
+   さらに buildClipText() が検証・モデル生成・整形を実行するため、
+   処理の境界が呼び出し側から見えにくくなっています。
+   今の規模なら、Resolver が検証済みの位置情報を返し、続いて Formatter を
+   呼ぶ構成を推奨します。現在の構成を維持するなら、
+   JavaLocationProcessorFactory.create(...) の方が実態に合います。
 
-3. Location が不完全な状態を許す
-   対象: src/main/java/com/example/domain/Location.java:3
-   すべてのフィールドを後から設定する可変オブジェクトです。
-   型の位置では methodName == null、lineNumber == 0 となり、メソッド用として整形できるかをモデル自身から判断できません。
-   コンストラクタやファクトリで必須項目を確定する不変モデルを推奨します。
-   型とメソッドの違いを厳密に扱う必要があるなら、TypeLocation と MethodLocation に分けると明確です。
+2. 選択失敗時の扱いに一貫性がない
+   対象: src/main/java/com/example/application/JavaLocationResolver.java:24
+         src/main/java/com/example/presentation/ClipJavaLocationHandler.java:29
+   空選択と対象外要素はエラー通知になりますが、要素を取得できない場合は
+   OperationIgnoredException によって無反応になります。
+   エディタがないなどの実行対象外は早期 return、Javaエディタ内での選択不備は
+   InvalidSelectionException とすると理解しやすくなります。
+   正常な無操作を表すためだけの OperationIgnoredException は省略できると考えます。
 
-4. 行番号の意味が名前から分からない
-   対象: src/main/java/com/example/domain/LocationFormatter.java:17
-   整形時に +1 しているため、内部の lineNumber はゼロ始まりです。
-   また、取得元はメソッド宣言位置ではなく選択開始行です。
-   選択行を出す仕様なら selectionStartLineIndex、表示用に変換した値なら lineNumber と区別してください。
-   表示用モデルには最初から1始まりの値を渡すと、整形側が Eclipse の表現を知る必要がなくなります。
+3. 小さなクラスへの分割が処理を追う負担になっている
+   対象: src/main/java/com/example/domain/TypeSelection.java:3
+         src/main/java/com/example/domain/TypeValidator.java:5
+         src/main/java/com/example/domain/MethodSelection.java:3
+         src/main/java/com/example/domain/MethodValidator.java:5
+   TypeSelection は文字列一つを保持し、TypeValidator は文字列比較だけを行います。
+   メソッド側もほぼ同じ構造です。
+   個別に拡張する予定がなければ、選択情報を一つにまとめ、名前の検証を共通化して
+   十分です。一方、型とメソッドで必須情報が異なる TypeLocation / MethodLocation
+   の分割には意味があります。
+   これらのコンストラクタで必須値と正の行番号を検証すると、モデルの契約も
+   明確になります。
 
-5. 失敗時の契約が揃っていない
-   対象: src/main/java/com/example/application/ClipProcessResolver.java:24
-   要素を取得できない場合に null、対象外なら例外を返します。
-   その結果、同じ選択失敗でも無反応になる場合とダイアログが出る場合があります。
-   想定内の選択エラーは一貫した結果または専用例外で扱い、予期しない障害とは区別すると、呼び出し側も簡潔になります。
+4. 配布用プラグインとしての設定が不足している
+   対象: pom.xml:124
+   POM は plugin.xml と META-INF/MANIFEST.MF を参照していますが、
+   対象ディレクトリにはありません。
+   単独でビルド・配布する想定なら整備が必要です。
+   Handler の登録先も、現在の presentation パッケージと一致させる必要があります。
 
 命名の改善案
 
-現在の名前                 候補                        理由
-ClipJavaLocationHandler    CopyJavaLocationHandler     実際の動作はコピー
-ClipProcessResolver        JavaLocationResolver        位置情報を返す構成に簡素化する場合
-ClipProcessor              JavaLocationProvider        型別実装を残す場合の役割を表す
-LocationResolver           JavaLocationMapper          現在の責務は JDT 要素からモデルへの変換
-Location                   JavaLocation                何の位置情報か明示
-className                  typeName                    IType を扱うコードの用語に統一
-MethodContext              MethodSelection             格納している情報を具体的に表す
-ClipException              InvalidSelectionException   現在の主な用途を表す
+・ClipJavaLocationHandler → CopyJavaLocationHandler
+  操作がコピーであることを明示します。
+・buildClipText() → buildClipboardText()
+  略語の曖昧さを解消します。
+・MethodLocation.className → typeName
+  TypeLocation と用語を統一します。
+・lineNumber → selectionStartLineNumber
+  メソッド宣言行ではなく選択開始行であることを明示します。
+・context → selection
+  TypeSelection / MethodSelection と名前を一致させます。
+・TypeValidator / MethodValidator → TypeSelectionValidator / MethodSelectionValidator
+  個別のクラスを維持する場合、実際に検証する対象を明示します。
+
+JavaLocationMapper、JavaLocationFormatter、formatType() / formatMethod() は
+現在の責務に合っています。
+型を扱うメッセージも「クラス名」から「型名」に統一すると、コードとの対応が明確です。
 
 推奨する処理の流れ
 
 CopyJavaLocationHandler
-  → JavaLocationResolver: 選択の検証と JDT 要素の取得・変換
-  → JavaLocation: 不変の位置情報
-  → LocationFormatter: コピー文字列の生成
-  → クリップボードへの書き込み
+  → JavaLocationResolver: 選択の検証・位置情報の取得
+  → TypeLocation / MethodLocation
+  → JavaLocationFormatter: 文字列整形
+  → Handler: クリップボードへの書き込み・結果通知
 
-パッケージとクラス分割
-現在の application には UI ダイアログやクリップボード操作も含まれています。
-層を明確に分けたいなら Handler を ui に置くと自然です。
-一方、この規模なら、一行の比較ごとに Validator クラスを設けるより、選択検証をまとめた方が追いやすいです。
+旧レビューから解消された点
 
-プラグイン構成
-対象: pom.xml:145
-pom.xml は META-INF/MANIFEST.MF を参照していますが、対象ディレクトリにはそのファイルと plugin.xml がありません。
-単独で配布できるプラグインを目指すなら、構成ファイルも揃える必要があります。
+・位置情報モデルは TypeLocation / MethodLocation に分割され、フィールドが
+  final になっています。setter による変更を前提とした旧指摘は解消されています。
+・JavaLocationMapper はメソッド名を method.getElementName() から取得しています。
+  選択文字列からメソッド名を取得することへの旧指摘は解消されています。
+・型名の検証が追加され、行番号は取得時に1始まりへ変換されています。
+・旧 OperationCanceledException は OperationIgnoredException に置き換えられています。
+  名称は改善されていますが、無操作と不正な選択の扱いには上記の検討余地があります。
 
 レビュー範囲
-ソースの静的レビューのみ実施しました。
-レビュー時点ではファイル変更・ビルド・Eclipse 上での動作確認は行っていません。
+
+静的レビューのみ実施しました。
+ソースの変更、ビルド、Eclipse上での動作確認は行っていません。
+レビュー結果をこのファイルに保存しました。コミットは行っていません。

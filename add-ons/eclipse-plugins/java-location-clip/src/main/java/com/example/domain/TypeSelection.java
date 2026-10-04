@@ -1,14 +1,14 @@
 package com.example.domain;
 
-public class TypeContext {
+public class TypeSelection {
     private final String selectedText;
 
-    private TypeContext(String selectedText) {
+    private TypeSelection(String selectedText) {
         this.selectedText = selectedText;
     }
 
-    public static TypeContext of(String selectedText) {
-        return new TypeContext(selectedText);
+    public static TypeSelection of(String selectedText) {
+        return new TypeSelection(selectedText);
     }
 
     public String getSelectedText() {

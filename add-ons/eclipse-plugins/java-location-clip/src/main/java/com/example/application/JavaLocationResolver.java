@@ -8,12 +8,14 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 
-import com.example.ClipException;
-import com.example.domain.MethodContext;
+import com.example.InvalidSelectionException;
+import com.example.OperationIgnoredException;
+import com.example.domain.MethodSelection;
 import com.example.domain.SelectionValidator;
+import com.example.domain.TypeSelection;
 
-public class ClipProcessResolver {
-    public static ClipProcessor resolve(ICompilationUnit cu, ISelection selection) throws JavaModelException {
+public class JavaLocationResolver {
+    public static JavaLocationProcessor resolve(ICompilationUnit cu, ISelection selection) throws JavaModelException {
 
         // 選択されたテキスト
         ITextSelection textSelection = (ITextSelection) selection;
@@ -24,22 +26,21 @@ public class ClipProcessResolver {
         // カーソル位置の Java 要素を取得
         IJavaElement selectedElement = cu.getElementAt(textSelection.getOffset());
         if (selectedElement == null) {
-            return null;
+            throw new OperationIgnoredException();
         }
 
         // 処理クラスの選択
         if (selectedElement instanceof IType type) {
-            return new TypeProcessor(type);
+            TypeSelection context = TypeSelection.of(trimmedText);
+            return new TypeProcessor(type, context);
         }
         if (selectedElement instanceof IMethod method) {
-            // String selectedText = textSelection.getText();
-            // String trimmedText = selectedText == null ? "" : selectedText.trim();
-            int lineNumber = textSelection.getStartLine();
-            MethodContext context = MethodContext.of(trimmedText, lineNumber);
+            int lineNumber = textSelection.getStartLine() + 1;
+            MethodSelection context = MethodSelection.of(trimmedText, lineNumber);
             return new MethodProcessor(method, context);
         }
         String elementName = (selectedElement == null) ? "なし" : selectedElement.getElementName();
-        throw new ClipException(String.format(
+        throw new InvalidSelectionException(String.format(
                 "選択された要素（%s）は対象外です。クラス名またはメソッド名を選択してください。",
                 elementName));
     }

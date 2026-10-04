@@ -2,26 +2,26 @@ package com.example.application;
 
 import org.eclipse.jdt.core.IMethod;
 
-import com.example.domain.Location;
-import com.example.domain.LocationFormatter;
-import com.example.domain.MethodContext;
+import com.example.domain.JavaLocationFormatter;
+import com.example.domain.MethodLocation;
+import com.example.domain.MethodSelection;
 import com.example.domain.MethodValidator;
 
-public class MethodProcessor implements ClipProcessor {
-    private final MethodContext context;
+public class MethodProcessor implements JavaLocationProcessor {
+    private final MethodSelection context;
     private final IMethod method;
     private final String methodName;
 
-    public MethodProcessor(IMethod method, MethodContext context) {
+    public MethodProcessor(IMethod method, MethodSelection context) {
         this.method = method;
         this.context = context;
         this.methodName = method.getElementName();
     }
 
     @Override
-    public String[] getJavaLocation() {
+    public String buildClipText() {
         MethodValidator.validate(this.context, this.methodName);
-        Location location = LocationResolver.resolve(this.method, this.methodName, this.context);
-        return LocationFormatter.asMethod(location);
+        MethodLocation location = JavaLocationMapper.map(this.method, this.context);
+        return JavaLocationFormatter.formatMethod(location);
     }
 }
