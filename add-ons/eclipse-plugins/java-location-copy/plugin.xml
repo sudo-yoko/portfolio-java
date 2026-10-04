@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="java-location-copy.commands.category"
+            name="カスタムプラグイン">
+      </category>
+      <command
+            categoryId="java-location-copy.commands.category"
+            name="Javaの位置情報をクリップボードにコピー"
+            id="java-location-copy.commands.javaLocationCopyCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="JavaLocationCopyHandler"
+            commandId="java-location-copy.commands.javaLocationCopyCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:#CompilationUnitEditorContext?after=additions">
+         <command
+               commandId="java-location-copy.commands.javaLocationCopyCommand"
+               label="Javaの位置情報をクリップボードにコピー"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
