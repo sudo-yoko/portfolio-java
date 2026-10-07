@@ -4,7 +4,6 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 
 import com.example.domain.MethodLocation;
-import com.example.domain.MethodSelection;
 import com.example.domain.TypeLocation;
 
 /**
@@ -18,7 +17,7 @@ public class JavaLocationMapper {
                 type.getTypeQualifiedName('$'));
     }
 
-    public static MethodLocation map(IMethod method, MethodSelection selection) {
+    public static MethodLocation map(IMethod method, int lineNumber) {
         IType declaringType = method.getDeclaringType();
         if (declaringType == null) {
             throw new IllegalStateException("型情報の取得に失敗しました。");
@@ -28,6 +27,6 @@ public class JavaLocationMapper {
                 declaringType.getPackageFragment().getElementName(),
                 declaringType.getTypeQualifiedName('$'),
                 method.getElementName(),
-                selection.getLineNumber());
+                lineNumber);
     }
 }

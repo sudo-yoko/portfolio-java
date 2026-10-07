@@ -5,22 +5,21 @@ import org.eclipse.jdt.core.IType;
 import com.example.domain.JavaLocationFormatter;
 import com.example.domain.SelectionValidator;
 import com.example.domain.TypeLocation;
-import com.example.domain.TypeSelection;
 
 public class TypeProcessor implements JavaLocationProcessor {
     private final IType type;
-    private final TypeSelection selection;
     private final String typeName;
+    private final String selectedText;
 
-    public TypeProcessor(IType type, TypeSelection selection) {
-        this.selection = selection;
+    public TypeProcessor(IType type, String selectedText) {
         this.type = type;
         this.typeName = type.getElementName();
+        this.selectedText = selectedText;
     }
 
     @Override
     public String buildClipText() {
-        SelectionValidator.validate(this.selection, this.typeName);
+        SelectionValidator.validate(this.selectedText, this.typeName);
         TypeLocation location = JavaLocationMapper.map(this.type);
         return JavaLocationFormatter.formatType(location);
     }

@@ -41,7 +41,8 @@ public class CopyJavaLocationHandler extends AbstractHandler {
 			if (!(selection instanceof ITextSelection)) {
 				return null;
 			}
-			String clip = JavaLocationProcessorFactory.create(cu, selection).buildClipText();
+			ITextSelection textSelection = (ITextSelection) selection;
+			String clip = JavaLocationProcessorFactory.create(cu, textSelection).buildClipText();
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(clip), null);
 			MessageDialog.openInformation(editor.getSite().getShell(), DIALOG_TITLE, "クリップボードにコピーしました\n" + clip);
 
